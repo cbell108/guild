@@ -21,18 +21,21 @@ going, and matches you with someone to go with. A Discord bot is one integration
 ```bash
 cp .env.example .env
 git config core.hooksPath .githooks
-cargo run -p seed
-cargo run -p ingest
-cargo run -p web
+cargo run -p seed      # 60 demo students, 10 crews, 4 weeks of history
+cargo run -p ingest    # live KSU calendar events
+cargo run -p web       # http://127.0.0.1:3000
 ```
 
-Then open <http://127.0.0.1:3000> (add `?mock=1` to browse the static mock data with no backend running).
+Add `?mock=1` to the URL to browse the static mock data with no backend. The Discord bot
+(`cargo run -p bot`) needs a `DISCORD_TOKEN` in `.env`. Natural-language hosting needs a local
+OpenAI-compatible server at `LLM_BASE_URL`; without one the form still works by hand.
 
-```bash
-cargo run -p bot
-```
+![For you feed](docs/screenshots/feed.jpg)
 
-The bot needs a `DISCORD_TOKEN` in `.env`.
+## Demo
+
+Run seed, ingest and web as above, open the site, click **Sign in** and pick **Connor B.** (a demo
+student). The full 3-minute judge walkthrough is in [`docs/DEMO.md`](docs/DEMO.md).
 
 ## Architecture
 
@@ -65,10 +68,21 @@ flowchart LR
 
 ## Recommender
 
-A hybrid score combines weighted content, collaborative, and social signals (plus a popularity
-term), so nothing depends on a single data source. Each component also produces a plain-English
-reason, which is what gets shown on the card instead of a raw score. The whole pipeline is
-evaluated offline against a popularity baseline in `docs/EVAL.md`.
+A hybrid score combines weighted content (embeddings), collaborative (item-item over implicit
+feedback), social (friends going, weighted by an attendance model) and popularity signals. Each
+component also produces a plain-English reason, which is shown on the card instead of a raw score.
+
+Offline evaluation (`cargo run -p eval`, full method in [`docs/EVAL.md`](docs/EVAL.md)): hold out
+the last week of a seeded world and rank the events students actually checked in to.
+
+| Method | Precision@5 | Recall@10 | NDCG@10 |
+|---|---:|---:|---:|
+| Popularity baseline | 0.059 | 0.558 | 0.255 |
+| **Hybrid** | **0.189** | **0.883** | **0.618** |
+
+That is ×3.18 precision@5 and ×1.58 recall@10 over popularity. The trained attendance model also
+beats a hand-set prior (log loss 0.554 vs 0.685). The data is synthetic, so treat the numbers as
+a pipeline check, not a real-world claim.
 
 ## Development
 
@@ -82,6 +96,7 @@ cargo test --workspace
 - API contract: `docs/API.md`
 - Design decisions: `docs/DECISIONS.md`
 - Work queue: `TASKS.md`
+- Demo script: `docs/DEMO.md`
 
 ## Data & privacy
 
