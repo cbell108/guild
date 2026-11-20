@@ -95,6 +95,7 @@ cargo test --workspace
 - Product spec: `docs/SPEC.md`
 - API contract: `docs/API.md`
 - Design decisions: `docs/DECISIONS.md`
+- Architecture: `docs/ARCHITECTURE.md`
 - Work queue: `TASKS.md`
 - Demo script: `docs/DEMO.md`
 
