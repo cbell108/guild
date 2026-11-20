@@ -600,6 +600,50 @@ pub async fn write(store: &Store, snapshot: &Snapshot) -> Result<(), StoreError>
     Ok(())
 }
 
+/// Writes demo availability for the next two campus-local days so the crew "best time" grid
+/// has something to show: the demo user is free 17:00-22:00 and each other crew member gets a
+/// window derived from their position (deterministic, overlapping in the evening).
+///
+/// Lives outside [`generate`] because [`Snapshot`] has no availability field.
+pub async fn write_availability(
+    store: &Store,
+    snapshot: &Snapshot,
+    now: DateTime<Utc>,
+) -> Result<(), StoreError> {
+    use hangouts_core::time::{local_date, resolve_local};
+    use hangouts_core::{Availability, Window};
+
+    let today = local_date(now);
+    for offset in 1..=2_u64 {
+        let Some(date) = today.checked_add_days(chrono::Days::new(offset)) else {
+            continue;
+        };
+        for (i, user) in snapshot.users.iter().enumerate() {
+            if !snapshot.crew_members.iter().any(|m| m.user_id == user.id) {
+                continue;
+            }
+            let (start_h, len_h) = if user.id == DEMO_USER {
+                (17, 5)
+            } else {
+                (15 + (i as u32 * 7 + offset as u32) % 5, 3 + (i as u32 % 3))
+            };
+            let local = |h: u32| date.and_hms_opt(h.min(23), 0, 0).map(resolve_local);
+            let (Some(start), Some(end)) = (local(start_h), local(start_h + len_h)) else {
+                continue;
+            };
+            if let Ok(window) = Window::new(start, end) {
+                store
+                    .set_availability(&Availability {
+                        user_id: user.id,
+                        window,
+                    })
+                    .await?;
+            }
+        }
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -772,5 +816,19 @@ mod tests {
             g as f64 / all.max(1) as f64
         };
         assert!(share(0) > 2.0 * share(3), "{} vs {}", share(0), share(3));
+    }
+
+    #[tokio::test]
+    async fn availability_gives_the_demo_crew_a_shared_evening() {
+        use hangouts_core::time::local_date;
+        let s = snap();
+        let store = Store::in_memory().await.unwrap();
+        store.migrate().await.unwrap();
+        write(&store, &s).await.unwrap();
+        write_availability(&store, &s, now()).await.unwrap();
+        let tomorrow = local_date(now()).succ_opt().unwrap();
+        let rows = store.list_availability_on(tomorrow, None).await.unwrap();
+        assert!(rows.iter().any(|a| a.user_id == DEMO_USER));
+        assert!(rows.len() >= 4, "crew members should have windows");
     }
 }

@@ -9,10 +9,14 @@ async fn main() -> anyhow::Result<()> {
     let url = std::env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite://campus.db".to_owned());
     let store = store::Store::connect(&url).await.context("open database")?;
     store.migrate().await.context("migrate")?;
-    let snapshot = seed::generate(&seed::SeedConfig::demo(chrono::Utc::now()));
+    let now = chrono::Utc::now();
+    let snapshot = seed::generate(&seed::SeedConfig::demo(now));
     seed::write(&store, &snapshot)
         .await
         .context("write seed data")?;
+    seed::write_availability(&store, &snapshot, now)
+        .await
+        .context("write availability")?;
     tracing::info!(
         users = snapshot.users.len(),
         events = snapshot.events.len(),
