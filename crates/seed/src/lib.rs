@@ -1,10 +1,10 @@
 //! Deterministic demo data: users with personas, crews, friendships, and weeks of intent and
 //! check-in history with realistic no-shows. Same config ⇒ same data, byte for byte.
 //!
-//! [`generate`] is pure (used by `eval` without a database); [`write`] persists a snapshot.
+//! [`generate`] is pure (used by `eval` without a database); [`write()`] persists a snapshot.
 //!
 //! How behaviour is simulated (so the recommender has real signal to find):
-//! - each student has a primary and a secondary [persona](catalog::PERSONAS); interest tags
+//! - each student has a primary and a secondary `persona`; interest tags
 //!   come from both, and the chance of RSVPing to an event grows with tag overlap;
 //! - crew members are much more likely to RSVP to their crew's hangouts, and students are
 //!   more likely to join events their friends are already going to;
