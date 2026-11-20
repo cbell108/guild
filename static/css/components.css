@@ -456,3 +456,13 @@ form.panel {
   height: 100%;
   background: var(--color-brand);
 }
+
+.ci-link {
+  display: block;
+  width: 100%;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+  font-size: var(--text-sm);
+  word-break: break-all;
+}

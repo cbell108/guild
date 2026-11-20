@@ -91,6 +91,7 @@ export default {
             : `<p class="muted">Sign in (top right) to say you're interested or going.</p>`
         }
         <a class="btn btn--ghost btn--sm" href="${esc(ev.calendar_url)}" download>Add to calendar</a>
+        ${me && ev.host && ev.host.id === me.user.id ? `<a class="btn btn--ghost btn--sm" href="#/checkin/${esc(ev.id)}">Open check-in</a>` : ""}
       </section>
 
       ${

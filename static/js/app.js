@@ -13,6 +13,7 @@ import crewsView from "./views/crews.js";
 import hostView from "./views/host.js";
 import eventView from "./views/event.js";
 import privacyView from "./views/privacy.js";
+import checkinView from "./views/checkin.js";
 
 /** View registry, keyed by route name. */
 const VIEWS = {
@@ -22,6 +23,7 @@ const VIEWS = {
   host: hostView,
   event: eventView,
   privacy: privacyView,
+  checkin: checkinView,
 };
 
 /**
@@ -45,13 +47,21 @@ export const state = {
  * Unknown hashes report `known: false` and default to the feed.
  */
 function parseHash() {
+  // The host's shared link is a real path: /checkin?event=<id>&token=<t>.
+  if (window.location.pathname === "/checkin") {
+    const q = new URLSearchParams(window.location.search);
+    return { name: "checkin", params: { event: q.get("event"), token: q.get("token") }, known: true };
+  }
   const raw = window.location.hash.replace(/^#\/?/, "");
   const segs = raw.split("/").filter(Boolean);
   if (segs.length === 0) return { name: "feed", params: {}, known: true };
   if (segs.length === 2 && segs[0] === "event" && segs[1]) {
     return { name: "event", params: { id: segs[1] }, known: true };
   }
-  if (segs.length === 1 && VIEWS[segs[0]]) {
+  if (segs.length === 2 && segs[0] === "checkin" && segs[1]) {
+    return { name: "checkin", params: { id: segs[1] }, known: true };
+  }
+  if (segs.length === 1 && segs[0] !== "checkin" && VIEWS[segs[0]]) {
     return { name: segs[0], params: {}, known: true };
   }
   return { name: "feed", params: {}, known: false };
