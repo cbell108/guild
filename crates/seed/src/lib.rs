@@ -532,8 +532,10 @@ fn gen_activity(rng: &mut ChaCha8Rng, snap: &mut Snapshot, sims: &[Sim], now: Da
             }
         } else if event.starts_at < now + TimeDelta::weeks(1) {
             for (u, level, created) in &rsvps {
-                let force = *u == 0 && buddy.is_empty();
-                if *level == IntentLevel::Interested && (force || rng.random_bool(0.2)) {
+                // Solo RSVPs (never the demo user, who toggles it live) sometimes want company,
+                // so the buddy-match demo step has someone to match with.
+                let solo = matches!(level, IntentLevel::Interested | IntentLevel::Going);
+                if *u != 0 && solo && rng.random_bool(0.3) {
                     buddy.push(BuddyRequest {
                         user_id: snap.users[*u].id,
                         event_id: event.id,
@@ -733,13 +735,13 @@ mod tests {
                 assert!(confirmed <= cap as usize, "{} over capacity", e.title);
             }
         }
-        // Upcoming events already have RSVPs, and the demo user is looking for a buddy.
+        // Upcoming events already have RSVPs, and other students are looking for a buddy.
         assert!(
             s.intents
                 .iter()
                 .any(|i| s.event(i.event_id).unwrap().starts_at > now())
         );
-        assert!(s.buddy_requests.iter().any(|b| b.user_id == DEMO_USER));
+        assert!(s.buddy_requests.iter().any(|b| b.user_id != DEMO_USER));
     }
 
     #[test]
