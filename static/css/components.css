@@ -373,3 +373,14 @@ form.panel {
 .panel > .field {
   flex: none;
 }
+
+.chip--btn.is-selected {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: var(--color-text-inverse);
+}
+
+.filters .chips {
+  max-height: 7rem;
+  overflow-y: auto;
+}
