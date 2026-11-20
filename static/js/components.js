@@ -1,9 +1,9 @@
 /**
- * Shared UI fragments (HTML-string builders) used by several views.
- * Every dynamic value goes through `esc`.
+ * Event card building blocks shared by the feed, Browse and the event page.
+ * Pure HTML-string builders; every dynamic value goes through `esc`.
  */
-import { esc } from "./util.js";
-import { fmtEventTime } from "./util.js";
+import { esc, fmtClock } from "./util.js";
+import { cover, dateBadgeHtml, avatarStack } from "./ui.js";
 
 /** "Priya S." → "Priya". */
 function firstName(user) {
@@ -11,18 +11,15 @@ function firstName(user) {
 }
 
 /**
- * Friend presence line from a `FriendPresence`, e.g. "Jordan + 2 friends going".
+ * Friend presence line from a `FriendPresence`, e.g. "Jordan + 2 going".
  * Returns "" when no friends are going or interested.
  */
 export function friendLine(friends) {
   if (!friends) return "";
   const lead = friends.sample && friends.sample[0] ? firstName(friends.sample[0]) : "";
-  const plural = (n) => (n === 1 ? "friend" : "friends");
   if (friends.going > 0) {
     if (friends.going === 1) return lead ? `${lead} is going` : "1 friend going";
-    return lead
-      ? `${lead} + ${friends.going - 1} ${plural(friends.going - 1)} going`
-      : `${friends.going} friends going`;
+    return lead ? `${lead} + ${friends.going - 1} going` : `${friends.going} friends going`;
   }
   if (friends.interested > 0) {
     if (friends.interested === 1) return lead ? `${lead} is interested` : "1 friend interested";
@@ -37,16 +34,13 @@ export function intentLabel(my) {
   if (my.status === "waitlisted") {
     return my.waitlist_position ? `Waitlisted · #${my.waitlist_position}` : "Waitlisted";
   }
-  if (my.level === "going_with") {
-    return my.with ? `Going with ${firstName(my.with)}` : "Going";
-  }
+  if (my.level === "going_with") return my.with ? `Going with ${firstName(my.with)}` : "Going";
   return my.level === "going" ? "Going" : "Interested";
 }
 
-/** Kind badge ("Official" / "Hangout"). */
-export function kindBadge(kind) {
-  const label = kind === "official" ? "Official" : "Hangout";
-  return `<span class="badge-kind badge-kind--${esc(kind)}">${label}</span>`;
+/** Kind chip ("Official" / "Hangout"). */
+export function kindChip(kind) {
+  return `<span class="kind-chip kind-chip--${esc(kind)}">${kind === "official" ? "Official" : "Hangout"}</span>`;
 }
 
 /** Venue as one line ("Student Center · Game Room 274"). */
@@ -55,68 +49,102 @@ export function placeLine(location) {
   return [location.name, location.room].filter(Boolean).map(esc).join(" · ");
 }
 
-/** Pin icon + text helper for meta rows. */
-function metaRow(icon, html) {
-  return `<li class="meta-row"><span class="meta-row__icon" aria-hidden="true">${icon}</span><span>${html}</span></li>`;
-}
-
-const ICONS = {
-  clock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`,
-  pin: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>`,
-  people: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5M16 5.2a3 3 0 0 1 0 5.6M18 14.8c1.9.7 3 2.4 3 5.2"/></svg>`,
-};
-
-/** Capacity text ("2 spots left" / "Full — join the waitlist"), or "". */
+/** Capacity text ("2 of 8 spots left" / "Full · waitlist open"), or "". */
 export function spotsText(event) {
   if (event.capacity === null || event.capacity === undefined) return "";
   if (event.spots_left === 0) return "Full · waitlist open";
   return `${event.spots_left} of ${event.capacity} spots left`;
 }
 
+/** Pill shown only when spots are low (≤ 3) or the event is full. */
+function spotsPill(ev) {
+  if (ev.capacity === null || ev.capacity === undefined) return "";
+  if (ev.spots_left === 0) return `<span class="pill pill--warn">Full · waitlist</span>`;
+  if (ev.spots_left <= 3) {
+    return `<span class="pill pill--warn">${ev.spots_left} spot${ev.spots_left === 1 ? "" : "s"} left</span>`;
+  }
+  return "";
+}
+
+/** "7 PM · Student Center" — clock time and venue name on one line. */
+export function whenPlace(ev) {
+  return `${esc(fmtClock(ev.starts_at))} · ${esc(ev.location ? ev.location.name : "")}`;
+}
+
+/** Friend avatars plus the "Jordan + 2 going" text (or ""). */
+export function socialLine(ev) {
+  const text = friendLine(ev.friends);
+  if (!text) return "";
+  const f = ev.friends;
+  const shown = Math.min(3, (f.sample || []).length);
+  const total = f.going + (f.going ? 0 : f.interested);
+  return `<p class="social">${avatarStack(f.sample || [], Math.max(0, total - shown))}<span>${esc(text)}</span></p>`;
+}
+
 /**
- * One event card. `item` may be a `FeedItem` ({event, reasons}) or a bare
- * `EventCard`; at most one reason line is shown inline (the rest lives behind
- * the "Why this?" disclosure).
+ * One carousel/grid card. `item` is a `FeedItem` ({event, reasons, breakdown}) or a
+ * bare `EventCard`. `variant`: `"hero"` (large, title over the cover) or `"card"`.
+ * A feed item's reason shows as one ✨ line; its "Why?" info button carries the
+ * data-why attribute (the feed view opens a bottom sheet for it).
  */
-export function eventCard(item) {
+export function eventCard(item, variant = "card") {
   const ev = item.event || item;
   const reasons = item.reasons || [];
-  const friends = friendLine(ev.friends);
   const mine = intentLabel(ev.my_intent);
-  const spots = spotsText(ev);
-  const tags = (ev.tags || []).slice(0, 4).map((t) => `<span class="chip">#${esc(t)}</span>`).join("");
+  const title = `<a class="ecard__title-link" href="#/event/${esc(ev.id)}">${esc(ev.title)}</a>`;
+  const badges = `${dateBadgeHtml(ev.starts_at)}<span class="cover__kind">${kindChip(ev.kind)}</span>`;
+  const hero = variant === "hero";
+  const art = cover(
+    ev,
+    `${badges}${mine ? `<span class="cover__mine">${esc(mine)}</span>` : ""}${
+      hero ? `<h3 class="ecard__title ecard__title--over">${title}</h3>` : ""
+    }`,
+  );
+  const reason = reasons[0]
+    ? `<p class="reason"><span class="reason__text"><span aria-hidden="true">✨</span> ${esc(reasons[0].text)}</span>
+        <button type="button" class="reason__info" data-why="${esc(ev.id)}" aria-label="Why am I seeing this?"><svg class="icon" aria-hidden="true"><use href="#i-info" /></svg></button></p>`
+    : "";
+  return `<article class="ecard ecard--${variant}" data-id="${esc(ev.id)}">
+    ${art}
+    <div class="ecard__body">
+      ${hero ? "" : `<h3 class="ecard__title">${title}</h3>`}
+      <p class="ecard__meta">${whenPlace(ev)}</p>
+      ${socialLine(ev)}
+      ${reason}
+      ${spotsPill(ev)}
+    </div>
+  </article>`;
+}
+
+/** Compact Browse row: 72 px cover thumbnail on the left, text on the right. */
+export function eventRow(ev) {
+  const mine = intentLabel(ev.my_intent);
+  const friends = friendLine(ev.friends);
+  return `<a class="erow" href="#/event/${esc(ev.id)}">
+    ${cover(ev)}
+    <span class="erow__text">
+      <span class="erow__title">${esc(ev.title)}</span>
+      <span class="erow__meta">${whenPlace(ev)}</span>
+      <span class="erow__tags">${kindChip(ev.kind)}${friends ? `<span class="erow__friends">${esc(friends)}</span>` : ""}${
+        mine ? `<span class="pill">${esc(mine)}</span>` : ""
+      }${spotsPill(ev)}</span>
+    </span>
+  </a>`;
+}
+
+/** Bottom-sheet body explaining a feed item's reasons + score breakdown. */
+export function whyHtml(item) {
   const bd = item.breakdown;
   const bars = bd
-    ? `<div class="why__bars" aria-label="Score breakdown">${["content", "collaborative", "social", "popular"]
+    ? `<div class="why__bars">${["content", "collaborative", "social", "popular"]
         .filter((k) => bd[k] > 0)
         .map(
           (k) =>
-            `<span class="why__bar"><span>${k}</span><span class="why__track"><span class="why__fill" style="width:${Math.min(100, Math.round(bd[k] * 250))}%"></span></span></span>`,
+            `<div class="why__bar"><span>${k}</span><span class="why__track"><span class="why__fill" style="width:${Math.min(100, Math.round(bd[k] * 250))}%"></span></span></div>`,
         )
         .join("")}</div>`
     : "";
-  const why = reasons.length
-    ? `<details class="why"><summary>Why am I seeing this?</summary><ul>${reasons
-        .map((r) => `<li><span class="why__kind">${esc(r.kind)}</span> ${esc(r.text)}</li>`)
-        .join("")}</ul>${bars}</details>`
-    : "";
-  return `
-    <article class="event-card card">
-      <div class="event-card__top">
-        ${kindBadge(ev.kind)}
-        ${mine ? `<span class="status-pill">${esc(mine)}</span>` : ""}
-      </div>
-      <h2 class="event-card__title"><a href="#/event/${esc(ev.id)}">${esc(ev.title)}</a></h2>
-      <ul class="meta-list">
-        ${metaRow(ICONS.clock, esc(fmtEventTime(ev.starts_at, ev.ends_at)))}
-        ${metaRow(ICONS.pin, placeLine(ev.location))}
-        ${friends ? metaRow(ICONS.people, `<strong>${esc(friends)}</strong>`) : ""}
-      </ul>
-      ${reasons[0] ? `<p class="reason">${esc(reasons[0].text)}</p>` : ""}
-      ${why}
-      <div class="event-card__foot">
-        <span class="chips">${tags}</span>
-        ${spots ? `<span class="spots">${esc(spots)}</span>` : ""}
-      </div>
-    </article>`;
+  return `<ul class="why__list">${(item.reasons || [])
+    .map((r) => `<li><span class="why__kind">${esc(r.kind)}</span> ${esc(r.text)}</li>`)
+    .join("")}</ul>${bars}`;
 }
