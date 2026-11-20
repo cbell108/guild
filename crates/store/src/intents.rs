@@ -60,7 +60,9 @@ impl Store {
         level: IntentLevel,
         at: DateTime<Utc>,
     ) -> Result<Intent> {
-        let mut tx = self.pool.begin().await?;
+        // IMMEDIATE takes the write lock up front, so concurrent RSVPs serialize on the
+        // capacity check instead of failing with SQLITE_BUSY when upgrading a read.
+        let mut tx = self.pool.begin_with("BEGIN IMMEDIATE").await?;
         let capacity: Option<Option<i64>> = sqlx::query("SELECT capacity FROM events WHERE id = ?")
             .bind(event.to_string())
             .fetch_optional(&mut *tx)
@@ -142,7 +144,9 @@ impl Store {
         event: EventId,
         at: DateTime<Utc>,
     ) -> Result<RemoveOutcome> {
-        let mut tx = self.pool.begin().await?;
+        // IMMEDIATE takes the write lock up front, so concurrent RSVPs serialize on the
+        // capacity check instead of failing with SQLITE_BUSY when upgrading a read.
+        let mut tx = self.pool.begin_with("BEGIN IMMEDIATE").await?;
         let row = sqlx::query("SELECT * FROM intents WHERE user_id = ? AND event_id = ?")
             .bind(user.to_string())
             .bind(event.to_string())
