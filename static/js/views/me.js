@@ -5,6 +5,7 @@
 import { api } from "../api.js";
 import { esc } from "../util.js";
 import { avatar, openSheet, toast } from "../ui.js";
+import { openInterestSheet } from "../interests.js";
 import { bindSearch } from "../people.js";
 
 /** One friend/request row. */
@@ -34,7 +35,8 @@ export default {
         <header class="profile">
           ${avatar(user, "avatar--lg")}
           <div><h1>${esc(user.display_name)}</h1><p class="muted">${esc(user.bio || "")}</p>
-          <p class="profile__tags">${(state.me.interests || []).map((t) => `<span class="chip">#${esc(t)}</span>`).join("")}</p></div>
+          <p class="profile__tags">${(state.me.interests || []).map((t) => `<span class="chip">#${esc(t)}</span>`).join("")}
+            <button type="button" class="chip chip--action" data-edit-interests>✏️ Edit interests</button></p></div>
         </header>
 
         ${
@@ -114,6 +116,12 @@ export default {
         }),
       );
       root.querySelectorAll("[data-add-friend]").forEach((b) => b.addEventListener("click", addFriendSheet));
+      root.querySelector("[data-edit-interests]").addEventListener("click", () =>
+        openInterestSheet(state.me, (updated) => {
+          state.me = updated;
+          paint();
+        }),
+      );
       root.querySelector("#sign-out").addEventListener("click", () => state.logout());
     };
 
