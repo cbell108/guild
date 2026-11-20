@@ -10,6 +10,7 @@ pub mod feed;
 pub mod friends;
 pub mod intents;
 pub mod parse;
+pub mod privacy;
 
 use hangouts_core::EventId;
 

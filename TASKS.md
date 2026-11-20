@@ -24,7 +24,7 @@ Your branch has Lane C's crates as placeholders: `recommend::feed` returns upcom
 - [x] A9 Friends + crews endpoints.
 - [x] A10 `POST /api/parse` → `llm::parse_hangout`; 503 with a friendly message if the LLM is down.
 - [x] A11 STRETCH Check-in: rotating HMAC QR token (60 s window) `GET /api/events/:id/qr`, `POST /api/checkin`.
-- [ ] A12 STRETCH Privacy settings endpoints (visibility toggles, delete history).
+- [x] A12 STRETCH Privacy settings endpoints (visibility toggles, delete history).
 
 ## Lane B — frontend (Sonnet) · owns `static/` (not `static/mock/` shapes — those follow docs/API.md)
 Accept for every task: works with `?mock=1` and against the live API; no console errors; mobile width 390 px looks right.

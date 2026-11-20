@@ -18,6 +18,7 @@ pub use state::{AppState, Clock};
 
 use routes::{
     auth as auth_routes, buddy, calendar, checkin, crews, events, feed, friends, intents, parse,
+    privacy,
 };
 
 /// The full router.
@@ -42,6 +43,8 @@ pub fn app(state: AppState) -> Router {
         )
         .route("/api/events/{id}/qr", get(checkin::qr))
         .route("/api/checkin", post(checkin::checkin))
+        .route("/api/me/privacy", get(privacy::get).put(privacy::put))
+        .route("/api/me/history", delete(privacy::delete_history))
         .route("/api/feed", get(feed::feed))
         .route("/api/parse", post(parse::parse))
         .route("/api/friends", get(friends::list).post(friends::request))
