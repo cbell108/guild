@@ -5,7 +5,7 @@ Build: `NODE_PATH=<dir with pptxgenjs> node docs/deck/build.js` → `docs/deck/G
 All numbers come from `docs/EVAL.md`, `docs/SPEC.md`, `docs/API.md`. Demo data is synthetic.
 
 ## 1. Title — Guild
-*Never go alone.* KSU AI Club Hackathon 2026. `[TEAM NAMES]`
+*Never go alone.* KSU AI Club Hackathon 2026. Connor Bell
 Notes: "We built Guild: a web app that finds you the right campus event, shows who's going, and finds someone to go with." (10 s)
 
 ## 2. The problem
@@ -57,5 +57,5 @@ Real check-in (offline QR), after-event attendee-only threads, club streaks, pil
 Notes: (10 s)
 
 ## 12. Thank you
-`[TEAM NAMES]` · repo + demo. Questions?
+Connor Bell · repo + demo. Questions?
 Notes: (5 s)

@@ -36,7 +36,7 @@ function card(s, x, y, w, h, fill) {
   T(s, "Guild", { x: 0.6, y: 1.5, w: 8.8, h: 1.0, fontFace: "Cambria", fontSize: 54, bold: true, color: PAPER });
   T(s, "Never go alone.", { x: 0.6, y: 2.6, w: 8.8, h: 0.6, fontSize: 28, color: GOLD, italic: true });
   T(s, "Events and hangouts for KSU, with someone to go with", { x: 0.6, y: 3.3, w: 8.8, h: 0.4, fontSize: 18, color: "DDDDDD" });
-  T(s, "KSU AI Club Hackathon 2026  ·  [TEAM NAMES]", { x: 0.6, y: 4.7, w: 8.8, h: 0.3, fontSize: 14, color: "BBBBBB" });
+  T(s, "KSU AI Club Hackathon 2026  ·  Connor Bell", { x: 0.6, y: 4.7, w: 8.8, h: 0.3, fontSize: 14, color: "BBBBBB" });
   s.addNotes("We built Guild: a web app that finds you the right campus event, shows which friends are going, and finds someone to go with. (10 s)");
 }
 
@@ -116,6 +116,18 @@ function card(s, x, y, w, h, fill) {
     const w = 1.66, fullH = w * sh[1] / 780, x = 1.2 + i * 2.8;
     s.addImage({ path: A(sh[0]), x, y: 1.3, w, h: fullH, sizing: { type: "crop", x: 0, y: 0, w, h: 3.2 }, altText: sh[2] });
     T(s, sh[2], { x: x - 0.4, y: 4.65, w: 2.5, h: 0.3, fontSize: 13, color: MUTED, align: "center" });
+  });
+}
+
+// 5c New: onboarding, Ask, Match times
+{
+  const s = slide("LIGHT", "New: onboarding, Ask and Match times",
+    "Three AI-assisted additions. Onboarding: pick at least 3 interests and the feed adapts. Ask: type what you want and the local model turns it into Browse filters, with plain search as the fallback. Match times: on any event, see you and your friends who share plans on an hour-by-hour grid, set your own free hours, and get a best time. Smash and fighting-game nights get a dedicated Match times view. Friends only, never a public list. (20 s)");
+  const shots = [["onboarding-mobile.jpg", 780, 1688, "Pick your interests"], ["ask-browse-mobile.jpg", 780, 1688, "Ask for something"], ["match-times-mobile.jpg", 468, 1080, "Match times"]];
+  shots.forEach((sh, i) => {
+    const w = 1.66, fullH = w * sh[2] / sh[1], x = 1.2 + i * 2.8;
+    s.addImage({ path: A(sh[0]), x, y: 1.3, w, h: fullH, sizing: { type: "crop", x: 0, y: 0, w, h: 3.2 }, altText: sh[3] });
+    T(s, sh[3], { x: x - 0.4, y: 4.65, w: 2.5, h: 0.3, fontSize: 13, color: MUTED, align: "center" });
   });
 }
 
@@ -218,8 +230,8 @@ function card(s, x, y, w, h, fill) {
 // 11 What's next
 {
   const s = slide("LIGHT", "What's next",
-    "Next: offline-capable QR check-in, attendee-only threads after an event, club streaks rather than individual ones, a pilot with KSU organizations, and re-running the evaluation on real data. (10 s)");
-  const items = ["Offline-capable QR check-in", "After-event attendee-only threads", "Club (not individual) streaks", "Pilot with KSU organizations", "Re-run the evaluation on real data"];
+    "Next: boosting an event with private points for attending, attendee-only threads after an event, club streaks rather than individual ones, a pilot with KSU organizations, and re-running the evaluation on real data. (10 s)");
+  const items = ["Boost an event, and private points for showing up", "After-event attendee-only threads", "Club (not individual) streaks", "Pilot with KSU organizations", "Re-run the evaluation on real data"];
   items.forEach((t, i) => {
     const y = 1.4 + i * 0.7;
     s.addShape(pres.ShapeType.ellipse, { x: 0.6, y: y + 0.05, w: 0.45, h: 0.45, fill: { color: GOLD }, line: { color: GOLD } });
@@ -233,8 +245,8 @@ function card(s, x, y, w, h, fill) {
   const s = pres.addSlide({ masterName: "DARK" });
   T(s, "Thank you", { x: 0.6, y: 1.7, w: 8.8, h: 1.0, fontFace: "Cambria", fontSize: 54, bold: true, color: PAPER });
   T(s, "Never go alone.", { x: 0.6, y: 2.8, w: 8.8, h: 0.6, fontSize: 28, color: GOLD, italic: true });
-  T(s, "[TEAM NAMES]  ·  Questions?", { x: 0.6, y: 4.5, w: 8.8, h: 0.4, fontSize: 18, color: "DDDDDD" });
+  T(s, "Connor Bell  ·  Questions?", { x: 0.6, y: 4.5, w: 8.8, h: 0.4, fontSize: 18, color: "DDDDDD" });
   s.addNotes("Thank the judges, introduce the team, take questions. (5 s)");
 }
 
-pres.writeFile({ fileName: path.join(__dirname, "Guild.pptx") }).then(() => console.log("written"));
+pres.writeFile({ fileName: path.join(__dirname, "campus-hangouts.pptx") }).then(() => console.log("written"));
