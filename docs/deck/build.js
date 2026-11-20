@@ -102,9 +102,21 @@ function card(s, x, y, w, h, fill) {
 {
   const s = slide("LIGHT", "The For you feed",
     "This is the real app with seeded demo students. Official KSU events and student hangouts sit together; each card has a reason, friends going, and spots left. (15 s)");
-  s.addImage({ path: A("feed.jpg"), x: 0.6, y: 1.35, w: 5.6, h: 3.78, altText: "Screenshot of the For you feed" });
+  s.addImage({ path: A("feed-for-you-desktop.jpg"), x: 0.6, y: 1.35, w: 5.6, h: 3.5, altText: "Screenshot of the For you feed" });
   const pts = ["Official KSU events and student hangouts side by side", "A reason on every card, plus 'Why am I seeing this?'", "Friends going, spots left", "Finite: 'You're caught up'"];
   T(s, pts.map((p, i) => ({ text: p, options: { bullet: true, breakLine: i < pts.length - 1, paraSpaceAfter: 10 } })), { x: 6.55, y: 1.45, w: 2.9, h: 3.4, fontSize: 15, valign: "top" });
+}
+
+// 5b Phone screenshots
+{
+  const s = slide("LIGHT", "Works on a phone, too",
+    "The same app on a phone: going with a friend and finding a buddy, hosting by describing the plan, and privacy settings. All real screenshots of the running app with seeded demo data. (10 s)");
+  const shots = [["event-going-with-buddy-mobile.jpg", 2174, "Going with + buddy match"], ["host-describe-prefill-mobile.jpg", 1688, "Describe it, we prefill"], ["privacy-settings-mobile.jpg", 1688, "Privacy controls"]];
+  shots.forEach((sh, i) => {
+    const w = 1.66, fullH = w * sh[1] / 780, x = 1.2 + i * 2.8;
+    s.addImage({ path: A(sh[0]), x, y: 1.3, w, h: fullH, sizing: { type: "crop", x: 0, y: 0, w, h: 3.2 }, altText: sh[2] });
+    T(s, sh[2], { x: x - 0.4, y: 4.65, w: 2.5, h: 0.3, fontSize: 13, color: MUTED, align: "center" });
+  });
 }
 
 // 6 Live demo

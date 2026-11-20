@@ -1,6 +1,6 @@
 # Pitch deck outline — campus-hangouts
 
-Target: ≤ 4 minutes spoken, 12 slides, plus the 3-minute live demo cued on slide 6 (`docs/DEMO.md`).
+Target: ≤ 4 minutes spoken, 13 slides, plus the 3-minute live demo cued on slide 6 (`docs/DEMO.md`).
 Build: `NODE_PATH=<dir with pptxgenjs> node docs/deck/build.js` → `docs/deck/campus-hangouts.pptx` (same text is in each slide's speaker notes; strip zip folder entries after building).
 All numbers come from `docs/EVAL.md`, `docs/SPEC.md`, `docs/API.md`. Demo data is synthetic.
 
@@ -24,8 +24,11 @@ Six feature tiles: For you feed with a reason on every card · Interested → Go
 Notes: Finite feed ("You're caught up"), waitlist auto-promote, one-tap back-out. (30 s)
 
 ## 5. The product (real screenshot)
-`feed.jpg`: official KSU events and student hangouts in one feed, reason lines, friends going, spots left.
+`feed-for-you-desktop.jpg`: official KSU events and student hangouts in one feed, reason lines, friends going, spots left.
 Notes: (15 s)
+
+## 5b. Works on a phone
+Three real mobile screenshots (Going with + buddy, describe-it hosting, privacy settings). Notes: 10 s.
 
 ## 6. Live demo
 Cue: follow `docs/DEMO.md` (feed → event + Going with + buddy → Host "describe it" → privacy). Fallback: `/?mock=1`.
