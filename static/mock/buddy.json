@@ -1,0 +1,12 @@
+{
+  "looking": true,
+  "matched": {
+    "user": {
+      "id": "00000000-0000-4000-8000-000000000109",
+      "display_name": "Hannah K.",
+      "bio": "Art major, pottery and board games"
+    },
+    "is_friend": false,
+    "reason": "You both like board games and went to Game Night"
+  }
+}

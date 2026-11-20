@@ -1,0 +1,62 @@
+[
+  {
+    "id": "00000000-0000-4000-8000-000000000101",
+    "display_name": "Connor B.",
+    "bio": "CS junior, Smash and board games"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000102",
+    "display_name": "Jordan M.",
+    "bio": "Smash 5 grinder, hosts game night"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000103",
+    "display_name": "Priya S.",
+    "bio": "Biology major, board game collector"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000104",
+    "display_name": "Marcus T.",
+    "bio": "Business major, soccer and good coffee"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000105",
+    "display_name": "Elena R.",
+    "bio": "CS senior, study groups and lectures"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000106",
+    "display_name": "Dev A.",
+    "bio": "CS sophomore, table tennis and gaming"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000107",
+    "display_name": "Sofia L.",
+    "bio": "Psych major, coffee and card games"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000108",
+    "display_name": "Tyler W.",
+    "bio": "Engineering undergrad, basketball and trivia"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000109",
+    "display_name": "Hannah K.",
+    "bio": "Art major, pottery and board games"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000110",
+    "display_name": "Ravi P.",
+    "bio": "Econ junior, Sunday pickup soccer"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000111",
+    "display_name": "Grace C.",
+    "bio": "Nursing student, book club and club fairs"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000112",
+    "display_name": "Owen D.",
+    "bio": "History major, trivia nights"
+  }
+]

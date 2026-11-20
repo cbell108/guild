@@ -1,0 +1,296 @@
+{
+  "items": [
+    {
+      "event": {
+        "id": "00000000-0000-4000-8000-000000000205",
+        "kind": "hangout",
+        "title": "Smash Night",
+        "starts_at": "2026-11-21T00:00:00Z",
+        "ends_at": "2026-11-21T03:00:00Z",
+        "location": {
+          "name": "Student Center",
+          "room": "Game Room 274",
+          "lat": null,
+          "lon": null,
+          "online_url": null
+        },
+        "tags": [
+          "smash",
+          "gaming"
+        ],
+        "capacity": 8,
+        "spots_left": 2,
+        "host": {
+          "id": "00000000-0000-4000-8000-000000000102",
+          "display_name": "Jordan M.",
+          "bio": "Smash 5 grinder, hosts game night"
+        },
+        "image_url": null,
+        "friends": {
+          "going": 3,
+          "interested": 1,
+          "sample": [
+            {
+              "id": "00000000-0000-4000-8000-000000000103",
+              "display_name": "Priya S.",
+              "bio": "Biology major, board game collector"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000106",
+              "display_name": "Dev A.",
+              "bio": "CS sophomore, table tennis and gaming"
+            }
+          ]
+        },
+        "my_intent": {
+          "level": "going_with",
+          "with": {
+            "id": "00000000-0000-4000-8000-000000000103",
+            "display_name": "Priya S.",
+            "bio": "Biology major, board game collector"
+          },
+          "status": "confirmed",
+          "waitlist_position": null
+        }
+      },
+      "score": 0.92,
+      "reasons": [
+        {
+          "kind": "social",
+          "text": "Jordan and 2 other friends are going"
+        },
+        {
+          "kind": "content",
+          "text": "Because you like smash and gaming"
+        }
+      ],
+      "breakdown": {
+        "content": 0.3,
+        "collaborative": 0.12,
+        "social": 0.38,
+        "popular": 0.12
+      }
+    },
+    {
+      "event": {
+        "id": "00000000-0000-4000-8000-000000000206",
+        "kind": "hangout",
+        "title": "Board Game Night",
+        "starts_at": "2026-11-22T00:00:00Z",
+        "ends_at": "2026-11-22T05:00:00Z",
+        "location": {
+          "name": "Student Center",
+          "room": "Game Room 275",
+          "lat": null,
+          "lon": null,
+          "online_url": null
+        },
+        "tags": [
+          "board-games",
+          "games"
+        ],
+        "capacity": null,
+        "spots_left": null,
+        "host": {
+          "id": "00000000-0000-4000-8000-000000000109",
+          "display_name": "Hannah K.",
+          "bio": "Art major, pottery and board games"
+        },
+        "image_url": "https://calendar.kennesaw.edu/images/board-game-night.jpg",
+        "friends": {
+          "going": 2,
+          "interested": 1,
+          "sample": [
+            {
+              "id": "00000000-0000-4000-8000-000000000103",
+              "display_name": "Priya S.",
+              "bio": "Biology major, board game collector"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000110",
+              "display_name": "Ravi P.",
+              "bio": "Econ junior, Sunday pickup soccer"
+            }
+          ]
+        },
+        "my_intent": null
+      },
+      "score": 0.81,
+      "reasons": [
+        {
+          "kind": "content",
+          "text": "Because you like board games"
+        },
+        {
+          "kind": "collaborative",
+          "text": "People who go to Smash night also go to this"
+        }
+      ],
+      "breakdown": {
+        "content": 0.42,
+        "collaborative": 0.21,
+        "social": 0.12,
+        "popular": 0.06
+      }
+    },
+    {
+      "event": {
+        "id": "00000000-0000-4000-8000-000000000203",
+        "kind": "official",
+        "title": "Intramural Basketball: Eagles vs. Hawks",
+        "starts_at": "2026-11-23T00:00:00Z",
+        "ends_at": "2026-11-23T02:00:00Z",
+        "location": {
+          "name": "Convocation Center",
+          "room": null,
+          "lat": 34.0251,
+          "lon": -84.2565,
+          "online_url": null
+        },
+        "tags": [
+          "basketball",
+          "intramurals",
+          "sports"
+        ],
+        "capacity": null,
+        "spots_left": null,
+        "host": null,
+        "image_url": "https://calendar.kennesaw.edu/images/convocation-basketball.jpg",
+        "friends": {
+          "going": 1,
+          "interested": 1,
+          "sample": [
+            {
+              "id": "00000000-0000-4000-8000-000000000102",
+              "display_name": "Jordan M.",
+              "bio": "Smash 5 grinder, hosts game night"
+            }
+          ]
+        },
+        "my_intent": {
+          "level": "interested",
+          "with": null,
+          "status": "confirmed",
+          "waitlist_position": null
+        }
+      },
+      "score": 0.64,
+      "reasons": [
+        {
+          "kind": "social",
+          "text": "Jordan is going"
+        }
+      ],
+      "breakdown": {
+        "content": 0.05,
+        "collaborative": 0.18,
+        "social": 0.3,
+        "popular": 0.11
+      }
+    },
+    {
+      "event": {
+        "id": "00000000-0000-4000-8000-000000000208",
+        "kind": "hangout",
+        "title": "Pickup Soccer at the Campus Green",
+        "starts_at": "2026-11-22T15:00:00Z",
+        "ends_at": "2026-11-22T17:00:00Z",
+        "location": {
+          "name": "Campus Green",
+          "room": null,
+          "lat": 34.0291,
+          "lon": -84.2493,
+          "online_url": null
+        },
+        "tags": [
+          "soccer",
+          "pickup",
+          "sports"
+        ],
+        "capacity": null,
+        "spots_left": null,
+        "host": {
+          "id": "00000000-0000-4000-8000-000000000104",
+          "display_name": "Marcus T.",
+          "bio": "Business major, soccer and good coffee"
+        },
+        "image_url": null,
+        "friends": {
+          "going": 1,
+          "interested": 0,
+          "sample": [
+            {
+              "id": "00000000-0000-4000-8000-000000000110",
+              "display_name": "Ravi P.",
+              "bio": "Econ junior, Sunday pickup soccer"
+            }
+          ]
+        },
+        "my_intent": null
+      },
+      "score": 0.47,
+      "reasons": [
+        {
+          "kind": "collaborative",
+          "text": "People who go to game nights also go to this"
+        }
+      ],
+      "breakdown": {
+        "content": 0.04,
+        "collaborative": 0.28,
+        "social": 0.09,
+        "popular": 0.06
+      }
+    },
+    {
+      "event": {
+        "id": "00000000-0000-4000-8000-000000000204",
+        "kind": "official",
+        "title": "Lectures & Guest Speakers: AI in Higher Education",
+        "starts_at": "2026-11-27T00:00:00Z",
+        "ends_at": "2026-11-27T02:00:00Z",
+        "location": {
+          "name": "Sturgis Library",
+          "room": "Auditorium",
+          "lat": null,
+          "lon": null,
+          "online_url": null
+        },
+        "tags": [
+          "lecture",
+          "ai"
+        ],
+        "capacity": null,
+        "spots_left": null,
+        "host": null,
+        "image_url": null,
+        "friends": {
+          "going": 1,
+          "interested": 0,
+          "sample": [
+            {
+              "id": "00000000-0000-4000-8000-000000000106",
+              "display_name": "Dev A.",
+              "bio": "CS sophomore, table tennis and gaming"
+            }
+          ]
+        },
+        "my_intent": null
+      },
+      "score": 0.33,
+      "reasons": [
+        {
+          "kind": "popular",
+          "text": "Popular on campus this week"
+        }
+      ],
+      "breakdown": {
+        "content": 0.15,
+        "collaborative": 0.02,
+        "social": 0.0,
+        "popular": 0.16
+      }
+    }
+  ],
+  "caught_up": true
+}

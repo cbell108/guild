@@ -1,0 +1,23 @@
+[package]
+name = "bot"
+description = "poise Discord bot integration."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+hangouts-core.workspace = true
+store.workspace = true
+recommend.workspace = true
+anyhow.workspace = true
+chrono.workspace = true
+dotenvy.workspace = true
+poise.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true

@@ -1,0 +1,81 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/core",
+    "crates/api",
+    "crates/store",
+    "crates/recommend",
+    "crates/llm",
+    "crates/ingest",
+    "crates/seed",
+    "crates/eval",
+    "crates/web",
+    "crates/bot",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.94"
+license = "MIT"
+publish = false
+
+# Every dependency the lanes are expected to need is declared here up front so the
+# root manifest and Cargo.lock stay stable while lanes work in parallel.
+[workspace.dependencies]
+hangouts-core = { path = "crates/core" }
+api = { path = "crates/api" }
+store = { path = "crates/store" }
+recommend = { path = "crates/recommend" }
+llm = { path = "crates/llm" }
+seed = { path = "crates/seed" }
+
+anyhow = "1.0.104"
+axum = "0.8.9"
+axum-extra = { version = "0.12.6", features = ["cookie"] }
+base64 = "0.23.1"
+chrono = { version = "0.4.45", features = ["serde"] }
+chrono-tz = "0.10.4"
+dotenvy = "0.15.7"
+fastembed = "7.7.1"
+hmac = "0.13.0"
+http-body-util = "0.1.5"
+poise = "0.7.1"
+rand = "0.10.4"
+rand_chacha = "0.10.0"
+reqwest = { version = "0.13.5", default-features = false, features = ["json", "rustls"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+sha2 = "0.11.1"
+sqlx = { version = "0.9.1", default-features = false, features = ["runtime-tokio", "sqlite", "chrono", "uuid", "migrate", "macros"] }
+thiserror = "2.0.21"
+tokio = { version = "1.54.1", features = ["full"] }
+tower = { version = "0.5.3", features = ["util"] }
+tower-http = { version = "0.7.1", features = ["fs", "trace"] }
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+uuid = { version = "1.29.3", features = ["v4", "v5", "serde"] }
+
+# Dependencies are pre-declared for the parallel lanes; unused ones are expected until used.
+[workspace.lints.cargo]
+unused_dependencies = "allow"
+
+[workspace.lints.rust]
+missing_docs = "warn"
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+cast_precision_loss = "allow"
+cast_possible_truncation = "allow"
+cast_sign_loss = "allow"
+cast_possible_wrap = "allow"
+similar_names = "allow"
+doc_markdown = "allow"
+too_many_lines = "allow"
+unwrap_used = "warn"
+expect_used = "warn"

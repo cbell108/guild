@@ -1,0 +1,14 @@
+{
+  "title": "Smash night",
+  "description": "Casual Smash Ultimate, all ranks. First to 5, best of 1.",
+  "date": "2026-11-20",
+  "start": "19:00",
+  "end": "22:00",
+  "location": "Student Center Game Room",
+  "tags": [
+    "smash",
+    "gaming"
+  ],
+  "capacity": 8,
+  "gear_notes": "2 Nintendo Switches"
+}

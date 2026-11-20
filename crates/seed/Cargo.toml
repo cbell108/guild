@@ -1,0 +1,24 @@
+[package]
+name = "seed"
+description = "Deterministic demo data generator."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+hangouts-core.workspace = true
+store.workspace = true
+anyhow.workspace = true
+chrono.workspace = true
+dotenvy.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+uuid.workspace = true

@@ -1,0 +1,22 @@
+[package]
+name = "store"
+description = "SQLite repository functions for campus-hangouts."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+hangouts-core.workspace = true
+chrono.workspace = true
+serde_json.workspace = true
+sqlx.workspace = true
+thiserror.workspace = true
+uuid.workspace = true
+
+[dev-dependencies]
+tokio.workspace = true

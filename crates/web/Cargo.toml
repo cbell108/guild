@@ -1,0 +1,38 @@
+[package]
+name = "web"
+description = "axum JSON API and static frontend server."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+hangouts-core.workspace = true
+api.workspace = true
+store.workspace = true
+recommend.workspace = true
+llm.workspace = true
+anyhow.workspace = true
+axum.workspace = true
+axum-extra.workspace = true
+base64.workspace = true
+chrono.workspace = true
+dotenvy.workspace = true
+hmac.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tower-http.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+uuid.workspace = true
+
+[dev-dependencies]
+http-body-util.workspace = true
+tower.workspace = true

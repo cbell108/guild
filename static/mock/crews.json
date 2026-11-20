@@ -1,0 +1,17 @@
+[
+  {
+    "id": "00000000-0000-4000-8000-000000000301",
+    "name": "Smash Saturdays",
+    "description": "Weekly Smash Ultimate crew, all levels. Ladder Saturdays, casual after."
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000302",
+    "name": "Game Night Regulars",
+    "description": "Board and card game crew. One new game every Friday."
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000303",
+    "name": "Campus Green Kicks",
+    "description": "Pickup soccer and football on the green, Sundays, rain or shine."
+  }
+]

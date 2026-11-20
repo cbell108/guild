@@ -1,0 +1,17 @@
+{
+  "user": {
+    "id": "00000000-0000-4000-8000-000000000101",
+    "display_name": "Connor B.",
+    "bio": "CS junior, Smash and board games"
+  },
+  "interests": [
+    "smash",
+    "gaming",
+    "board-games"
+  ],
+  "privacy": {
+    "attendance": "friends",
+    "buddy_matching": true,
+    "personalize": true
+  }
+}

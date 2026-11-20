@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "llm_unavailable",
+    "message": "Natural-language hosting is offline right now. Fill in the form manually."
+  }
+}

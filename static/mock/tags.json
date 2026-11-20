@@ -1,0 +1,34 @@
+[
+  {
+    "tag": "gaming",
+    "count": 4
+  },
+  {
+    "tag": "board-games",
+    "count": 3
+  },
+  {
+    "tag": "sports",
+    "count": 2
+  },
+  {
+    "tag": "smash",
+    "count": 2
+  },
+  {
+    "tag": "career",
+    "count": 1
+  },
+  {
+    "tag": "club-fair",
+    "count": 1
+  },
+  {
+    "tag": "lecture",
+    "count": 1
+  },
+  {
+    "tag": "soccer",
+    "count": 1
+  }
+]
