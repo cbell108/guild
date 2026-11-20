@@ -40,7 +40,7 @@ More in [`docs/screenshots/`](docs/screenshots/).
 
 ## Demo
 
-Run seed, ingest and web as above, open the site, click **Sign in** and pick **Connor B.** (a demo
+Run seed, ingest and web as above, open the site, click **Sign in** and pick **Casey (demo)** (a demo
 student). The full 3-minute judge walkthrough is in [`docs/DEMO.md`](docs/DEMO.md).
 
 ## Architecture
