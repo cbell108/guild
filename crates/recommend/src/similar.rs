@@ -6,7 +6,7 @@
 
 use std::collections::BTreeSet;
 
-use hangouts_core::{Reason, ReasonKind, UserId};
+use hangouts_core::{Reason, ReasonKind, UserId, Visibility};
 
 use crate::RecContext;
 use crate::content::tag_words;
@@ -29,6 +29,8 @@ pub struct UserMatch {
 /// Ranks `candidates` (excluding `ctx.user`) by interest and co-attendance similarity to
 /// `ctx.user`, best first, at most `k`. Candidates who turned off buddy matching in their
 /// privacy settings must already be excluded by the caller or are skipped here.
+/// Candidates whose attendance is private are compared on interests only: their history
+/// never affects the score or appears in a reason ("been to the same events").
 ///
 /// Duplicates in `candidates` are ignored; ties break by user id.
 pub fn similar_users(ctx: &RecContext<'_>, candidates: &[UserId], k: usize) -> Vec<UserMatch> {
@@ -48,7 +50,14 @@ pub fn similar_users(ctx: &RecContext<'_>, candidates: &[UserId], k: usize) -> V
         .filter(|u| *u != ctx.user && seen.insert(*u))
         .filter(|u| snapshot.user(*u).is_none_or(|x| x.privacy.buddy_matching))
         .map(|user_id| {
-            let theirs = feedback.get(&user_id).unwrap_or(&empty);
+            let private = snapshot
+                .user(user_id)
+                .is_some_and(|u| u.privacy.attendance == Visibility::Private);
+            let theirs = if private {
+                &empty
+            } else {
+                feedback.get(&user_id).unwrap_or(&empty)
+            };
             let their_interests: BTreeSet<&String> = snapshot
                 .user(user_id)
                 .map(|u| u.interests.iter().collect())
@@ -143,6 +152,25 @@ mod tests {
         );
         assert_eq!(texts(&m[2]), vec!["Also looking for someone to go with"]);
         assert!(m.windows(2).all(|w| w[0].score >= w[1].score));
+    }
+
+    #[test]
+    fn private_attendance_never_shows_in_score_or_reasons() {
+        let mut snap = fixture();
+        for u in &mut snap.users {
+            if u.id == CARL {
+                u.privacy.attendance = Visibility::Private;
+            }
+        }
+        let model = AttendanceModel::prior();
+        let embedder = HashEmbedder::default();
+        let private_ctx = ctx(&snap, ALICE, &model, &embedder);
+        let m = similar_users(&private_ctx, &[CARL], 1);
+        assert_eq!(texts(&m[0]), vec!["You both like board games"]);
+        let public_snap = fixture();
+        let public_ctx = ctx(&public_snap, ALICE, &model, &embedder);
+        let public = similar_users(&public_ctx, &[CARL], 1);
+        assert!(m[0].score < public[0].score, "co-attendance must not count");
     }
 
     #[test]
