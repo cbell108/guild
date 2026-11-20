@@ -20,3 +20,6 @@ chrono.workspace = true
 fastembed = { workspace = true, optional = true }
 serde.workspace = true
 thiserror.workspace = true
+
+[dev-dependencies]
+seed.workspace = true

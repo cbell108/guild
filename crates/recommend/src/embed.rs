@@ -78,9 +78,9 @@ impl Embedder for HashEmbedder {
 pub fn default_embedder() -> Box<dyn Embedder> {
     #[cfg(feature = "fastembed")]
     {
-        match fast::FastEmbedder::new() {
-            Ok(e) => return Box::new(e),
-            Err(_) => { /* model download/load failed: fall through to the hash embedder */ }
+        // A failed model download/load falls through to the hash embedder.
+        if let Ok(e) = fast::FastEmbedder::new() {
+            return Box::new(e);
         }
     }
     Box::new(HashEmbedder::default())

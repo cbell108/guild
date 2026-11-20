@@ -43,7 +43,7 @@ Your branch has Lane A's `store` as stubs (`StoreError::NotImplemented`). Test p
 - [x] C1 MUST `ingest`: page through the KSU API (`days=30&pp=100`), map to official Events, upsert. Save one real response as a test fixture; tests use the fixture, not the network.
 - [x] C2 MUST `seed`: deterministic (fixed RNG seed) 60 demo users with personas/interest tags, ~10 crews, friendships, 4 weeks of intent + check-in history with realistic no-shows; includes the user's own demo persona.
 - [x] C3 MUST Content scorer: fastembed embeddings of title+description+tags; user profile = mean of interest tags + attended events; cosine.
-- [ ] C4 MUST Social scorer: friend boost + attendance probability (logistic regression on intent level, days ahead, friends going, past show rate; trained on seed history; prior fallback).
+- [x] C4 MUST Social scorer: friend boost + attendance probability (logistic regression on intent level, days ahead, friends going, past show rate; trained on seed history; prior fallback).
 - [ ] C5 MUST Hybrid `feed()`: weighted sum, configurable weights, reasons from top contributing component(s) in plain English. Tests assert reasons.
 - [ ] C6 MUST `similar_users()` for buddy matching (interest + co-attendance similarity).
 - [ ] C7 MUST Collaborative scorer: item-item over implicit feedback (check-in 3, going 2, interested 1).

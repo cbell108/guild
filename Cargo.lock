@@ -3027,6 +3027,7 @@ dependencies = [
  "chrono",
  "fastembed",
  "hangouts-core",
+ "seed",
  "serde",
  "thiserror 2.0.21",
 ]
