@@ -49,7 +49,7 @@ No attendee lists or counts · friends see friends only, and only if they opted 
 Notes: Students feel tracked, not helped, so we made these rules normative and tested. (25 s)
 
 ## 10. Engineering and organization (Nudox track)
-10 crates with a strict dependency graph (core, api, store, recommend, llm, ingest, seed, eval, web, bot); frozen core and API contracts with mock JSON that round-trips; 184 tests, `cargo fmt` + clippy `-D warnings` enforced by a pre-commit hook; docs: SPEC, API, DECISIONS, EVAL, DEMO. (No CI workflow on main at time of drafting; add a line if one lands.)
+10 crates with a strict dependency graph (core, api, store, recommend, llm, ingest, seed, eval, web, bot); frozen core and API contracts with mock JSON that round-trips; 206 tests, `cargo fmt` + clippy `-D warnings` + tests enforced by a pre-commit hook and a GitHub Actions CI workflow; docs: SPEC, API, DECISIONS, EVAL, DEMO.
 Notes: (25 s)
 
 ## 11. What's next

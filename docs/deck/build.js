@@ -197,7 +197,7 @@ function card(s, x, y, w, h, fill) {
 // 10 Engineering
 {
   const s = slide("DARK", "Engineering and organization",
-    "For the Nudox track: ten crates with a strict dependency graph, and the recommender never touches the database so it is unit-testable. Core and API contracts were frozen early with mock JSON that round-trips through the wire types. 184 tests, with fmt and clippy as errors enforced by a pre-commit hook. And a docs set: spec, API contract, decisions, eval, demo script. (25 s)");
+    "For the Nudox track: ten crates with a strict dependency graph, and the recommender never touches the database so it is unit-testable. Core and API contracts were frozen early with mock JSON that round-trips through the wire types. 206 tests, with fmt and clippy as errors enforced by a pre-commit hook and in CI on every push. And a docs set: spec, API contract, decisions, eval, demo script. (25 s)");
   const crates = ["core", "api", "store", "recommend", "llm", "ingest", "seed", "eval", "web", "bot"];
   crates.forEach((c, i) => {
     const x = 0.6 + (i % 5) * 1.05, y = 1.5 + Math.floor(i / 5) * 0.8;
@@ -205,13 +205,13 @@ function card(s, x, y, w, h, fill) {
     T(s, c, { x, y, w: 1.0, h: 0.6, align: "center", valign: "middle", fontSize: 11, color: PAPER });
   });
   T(s, "10 Rust crates, no dependency cycles", { x: 0.6, y: 3.15, w: 4.9, h: 0.3, fontSize: 13, color: "BBBBBB" });
-  const stats = [["184", "tests"], ["2", "frozen contracts"], ["5", "design docs"]];
+  const stats = [["206", "tests"], ["2", "frozen contracts"], ["5", "design docs"]];
   stats.forEach((st, i) => {
     const x = 0.6 + i * 1.7;
     T(s, st[0], { x, y: 3.7, w: 1.5, h: 0.7, fontFace: "Cambria", fontSize: 40, bold: true, color: GOLD });
     T(s, st[1], { x, y: 4.4, w: 1.5, h: 0.3, fontSize: 13, color: "DDDDDD" });
   });
-  const pts = ["Recommender is DB-free, so it's unit-testable", "Core and API frozen; mock JSON round-trips through wire types", "fmt + clippy -D warnings via pre-commit hook", "SPEC, API, DECISIONS, EVAL and DEMO docs"];
+  const pts = ["Recommender is DB-free, so it's unit-testable", "Core and API frozen; mock JSON round-trips through wire types", "fmt + clippy -D warnings + tests: pre-commit hook and CI", "SPEC, API, DECISIONS, EVAL and DEMO docs"];
   T(s, pts.map((p, i) => ({ text: p, options: { bullet: true, breakLine: i < pts.length - 1, paraSpaceAfter: 12 } })), { x: 5.9, y: 1.5, w: 3.5, h: 3.2, fontSize: 15, color: PAPER, valign: "top" });
 }
 
