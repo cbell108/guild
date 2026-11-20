@@ -51,3 +51,14 @@ Your branch has Lane A's `store` as stubs (`StoreError::NotImplemented`). Test p
 - [x] C9 `llm::parse_hangout` via JSON-schema-constrained chat completion; unit-test the prompt/parse with a recorded response.
 - [x] C10 `bot`: port `/game`, `/availability`, `/gear` from the prototype to poise; `/hangout` creates an Event + Discord Scheduled Event; buttons write intents. Test pure helpers; no token needed overnight.
 - [x] C11 STRETCH `bot` `/foryou` → ephemeral top 3 with reasons.
+
+## Lane N — night queue (local model, RTX 5080) · docs + tests only, never `static/`
+- [ ] N1 `docs/ARCHITECTURE.md`: crate dependency graph (mermaid `flowchart`), request flow for `GET /api/feed` and `PUT /api/events/{id}/intent` (mermaid `sequenceDiagram`), data model (mermaid `erDiagram` from `migrations/0001_init.sql`), and where each design rule from `docs/DECISIONS.md` is enforced (file paths). Link it from `README.md`.
+- [ ] N2 `CHANGELOG.md` (Keep a Changelog format) for 0.1.0, grouped Added / Changed / Fixed, written from `git log --oneline` (summarize; no commit hashes needed).
+- [ ] N3 `CONTRIBUTING.md`: setup, the fmt/clippy/test gate and pre-commit hook, Conventional Commits with task ids, crate ownership and the dependency rules from `CLAUDE.md`, how to add an endpoint (DTO in `crates/api` → route in `crates/web` → test in `crates/web/tests` → `docs/API.md` → mock in `static/mock`). Plus `.editorconfig` (utf-8, lf, 4-space Rust, 2-space JS/CSS/HTML/JSON/YAML/MD).
+- [ ] N4 More `crates/recommend` unit tests in a new file `crates/recommend/tests/edge_cases.rs`: empty snapshot → empty feed; user with no interests and no history still gets a non-empty feed with reasons; events outside the 7-day horizon never appear; `limit` respected; scores sorted descending; every item has at least one reason.
+
+## Lane M — night queue (local model, RX 9070 XT) · tests only, never `static/`
+- [ ] M1 More `crates/ingest` tests in `crates/ingest/tests/mapping_edge_cases.rs` using inline JSON: virtual event with no location → "Online"; HTML entities in titles decoded or kept readable; duplicate instance ids deduplicated; events with an end before the start get the default length; tags normalized and capped.
+- [ ] M2 More `crates/store` tests in a new file `crates/store/tests/edge_cases.rs`: `search_users` treats `%` and `_` literally; `list_events` with `tags` matches any tag; `remove_friend` works in both directions; `delete_history` keeps friendships and crews; `set_availability` replaces the same local date only.
+- [ ] M3 Bot helper tests in `crates/bot/tests/` for message formatting helpers (roster text, availability chart lines incl. "(overnight)", gear list) against the functions in `crates/bot/src/helpers.rs`.

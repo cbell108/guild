@@ -11,3 +11,7 @@ Append under your own lane only.
 ## Lane B
 - B8 (partial): the host check-in page shows the rotating link with a copy button but draws no QR image — the frontend ships no dependencies and has no QR encoder. Attendees open the link (`/checkin?event=…&token=…`), which posts the token. A small vendored QR encoder (e.g. nayuki's MIT `qrcodegen`) would close this.
 - B9 (partial): accessibility pass done (heading focus + titles on navigation, labelled controls, aria-live regions, reduced-motion tokens). Only `docs/screenshots/feed.jpg` (low-resolution, mock data) is saved; re-capture feed, event, host, browse and crews at full size for the deck.
+
+## Lane N (night queue, 5080)
+
+## Lane M (night queue, 9070 XT)
