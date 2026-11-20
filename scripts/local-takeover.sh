@@ -8,12 +8,15 @@
 # fails, its changes are stashed (`git stash list`) and it is recorded in BLOCKED.md.
 #
 # Usage: scripts/local-takeover.sh <worktree> <A|B|C> [--until HH:MM] [--max N] [--model ID]
+# Run a second lane in parallel on the other GPU with --model llamacpp/qwen3.8-27B-UD-Q3_K_XL:9070XT#high
 # Stop early: touch <worktree>/.takeover-stop (the current task finishes first).
 # Log: <worktree>/.takeover.log
 set -euo pipefail
 
 wt=${1:?worktree path}; lane=${2:?lane letter A|B|C}; shift 2
-until_hm=""; max=99; model="llamacpp/qwen3.8-27B-UD-Q6_K_M#high"
+# Default: the Q3 preset on one GPU (split layout). Pass --model llamacpp/qwen3.8-27B-UD-Q6_K_M#high
+# only for tasks that need the cross-GPU model; it evicts the split layout while it runs.
+until_hm=""; max=99; model="llamacpp/qwen3.8-27B-UD-Q3_K_XL:5080#high"
 while [[ $# -gt 0 ]]; do
   case $1 in
     --until) until_hm=$2; shift 2 ;;

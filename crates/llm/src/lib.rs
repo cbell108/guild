@@ -16,8 +16,10 @@ use thiserror::Error;
 
 /// Default server URL.
 pub const DEFAULT_BASE_URL: &str = "http://127.0.0.1:8080/v1";
-/// Default model id.
-pub const DEFAULT_MODEL: &str = "qwen3.8-27B-UD-Q6_K_M";
+/// Default model id: the Q3 preset resident on the RX 9070 XT in the router's split layout.
+/// Parsing a hangout is a small task (153/153 on `tests/phrases.json`), so it never needs to
+/// evict the split layout for the cross-GPU Q6 model. Override with `LLM_MODEL`.
+pub const DEFAULT_MODEL: &str = "qwen3.8-27B-UD-Q3_K_XL:9070XT";
 
 /// LLM errors.
 #[derive(Debug, Error)]

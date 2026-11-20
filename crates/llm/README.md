@@ -30,6 +30,7 @@ Each phrase scores the date, start, end, location, tags and capacity it expects 
 |---|---|
 | Before (original prompt, no `refine`) | 151 / 153 (98.7%) |
 | After (this prompt + `refine`) | 153 / 153 (100%) |
+| After, on `qwen3.8-27B-UD-Q3_K_XL:9070XT` (the default since 2026-11-20) | 153 / 153 (100%) |
 
 The two baseline misses were the traps this work targets: a date invented for "chill hangout at
 the rec center" (no day given) and "midnight snack run in 2 hours" parsed as 01:00 instead of
