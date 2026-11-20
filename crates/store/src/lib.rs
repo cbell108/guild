@@ -1,8 +1,7 @@
 //! SQLite repository for campus-hangouts.
 //!
-//! This crate is implemented by **Lane A**. The public API below is **FROZEN**:
-//! other lanes code against these signatures and must not change them; requests
-//! for a change are appended to `NEEDS.md` instead.
+//! The public API below is stable: the web server, bot, seed and eval code
+//! against these signatures.
 //!
 //! Implementation notes:
 //! - Only the runtime [`sqlx::query`] API is used. The compile-time `query!`

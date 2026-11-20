@@ -18,7 +18,7 @@ pub struct AttendanceFeatures {
     pub past_show_rate: f64,
 }
 
-/// Logistic model of P(check-in | features). Internals are Lane C's to change.
+/// Logistic model of P(check-in | features). Internals may change freely.
 #[derive(Debug, Clone, PartialEq)]
 pub struct AttendanceModel {
     bias: f64,

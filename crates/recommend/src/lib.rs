@@ -1,10 +1,10 @@
 //! Hybrid event recommender: content + collaborative + social (+ popularity), each part
 //! explainable. **DB-free**: callers pass a [`hangouts_core::Snapshot`] in and get results out.
 //!
-//! Frozen after Phase 0 (other lanes call these): [`RecContext`], [`FeedConfig`], [`Weights`],
+//! Stable entry points (the web server and bot call these): [`RecContext`], [`FeedConfig`], [`Weights`],
 //! [`feed`], [`similar_users`], [`UserMatch`], [`AttendanceModel`], [`AttendanceFeatures`],
 //! [`Embedder`], [`HashEmbedder`], [`default_embedder`], [`event_text`], [`RecommendError`].
-//! Lane C may add modules and pub items but must not change those signatures.
+//! Keep those signatures stable; internals may change freely.
 
 pub mod collab;
 pub mod content;

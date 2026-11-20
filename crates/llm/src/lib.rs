@@ -1,9 +1,9 @@
 //! Client for the local OpenAI-compatible LLM server (llama.cpp router) and the
 //! natural-language → [`HangoutDraft`] feature.
 //!
-//! Frozen after Phase 0: [`LlmConfig`], [`LlmClient`], [`parse_hangout`], [`LlmError`].
+//! Public surface: [`LlmConfig`], [`LlmClient`], [`parse_hangout`], [`LlmError`].
 //! Everything degrades gracefully: callers treat [`LlmError::Unavailable`] and
-//! [`LlmError::NotImplemented`] as "feature unavailable" (HTTP 503), and tests never need a
+//! [`LlmError::BadResponse`] as "feature unavailable" (HTTP 503), and tests never need a
 //! running server.
 
 pub mod hangout;
@@ -28,9 +28,6 @@ pub enum LlmError {
     /// Server answered but the output could not be used.
     #[error("the LLM returned an unusable response: {0}")]
     BadResponse(String),
-    /// Not built yet.
-    #[error("not implemented yet")]
-    NotImplemented,
 }
 
 /// Connection settings.

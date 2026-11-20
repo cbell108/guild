@@ -28,7 +28,7 @@ pub async fn parse(
     match llm::parse_hangout(&state.llm, text, state.now()).await {
         Ok(draft) => Ok(Json(draft)),
         Err(err) => {
-            // Unavailable, BadResponse and NotImplemented all degrade the same way.
+            // Unavailable and BadResponse both degrade the same way.
             tracing::warn!("parse_hangout failed: {err}");
             Err(WebError::new(
                 api::ErrorCode::LlmUnavailable,

@@ -3,11 +3,6 @@
 /// Errors that can occur in store operations.
 #[derive(Debug, thiserror::Error)]
 pub enum StoreError {
-    /// The method is a frozen-API stub that is not implemented yet.
-    /// The field is the name of the method.
-    #[error("not implemented yet: {0}")]
-    NotImplemented(&'static str),
-
     /// The requested row (user, event, crew, ...) does not exist.
     #[error("not found")]
     NotFound,
