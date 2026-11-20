@@ -15,9 +15,9 @@ Priority order inside each lane: **MUST** first, then STRETCH. Tick `[x]` when d
 Your branch has Lane C's crates as placeholders: `recommend::feed` returns upcoming events unscored, `similar_users` returns candidates in order, `llm::parse_hangout` returns `NotImplemented` (→ 503). Build and test against those.
 - [x] A1 MUST Migrations: users (+ interests, privacy columns, discord_id unique), events (+ `embedding BLOB`, external_id unique), intents (level, with_user, status, created_at — the waitlist is `status = waitlisted`), crews, crew_members, friendships, buddy_requests, availability, gear, presence, checkins. Shapes follow the frozen `Store` signatures and core types. Accept: `cargo test -p store` migrates an in-memory DB.
 - [x] A2 MUST Implement every frozen store fn with tests.
-- [ ] A3 MUST `GET /api/events`, `GET /api/events/:id`, `POST /api/events` (hangout). Accept: tests in `crates/web/tests` using `tower::ServiceExt::oneshot`.
-- [ ] A4 MUST `PUT/DELETE /api/events/:id/intent` incl. waitlist auto-promote on back-out when capacity is set.
-- [ ] A5 MUST Demo login: `GET /api/demo-users`, `POST /api/login {user_id}` sets `uid` cookie.
+- [x] A3 MUST `GET /api/events`, `GET /api/events/:id`, `POST /api/events` (hangout). Accept: tests in `crates/web/tests` using `tower::ServiceExt::oneshot`.
+- [x] A4 MUST `PUT/DELETE /api/events/:id/intent` incl. waitlist auto-promote on back-out when capacity is set.
+- [x] A5 MUST Demo login: `GET /api/demo-users`, `POST /api/login {user_id}` sets `uid` cookie.
 - [ ] A6 MUST `GET /api/feed` → `recommend::feed` over `store.load_snapshot()`, top 10 for the next 7 days + `caught_up: true` at the end; friend presence counts (friends only). Hold `recommend::default_embedder()` and `AttendanceModel::train(..)` in `AppState`; backfill `events_missing_embedding()` at startup and embed new hangouts on create.
 - [ ] A7 MUST Buddy match: `POST /api/events/:id/buddy` (toggle looking), `GET /api/events/:id/buddy` → friend first, else `recommend::similar_users` among others looking.
 - [ ] A8 MUST Serve `static/` at `/`; `GET /api/events/{id}/calendar.ics`.
