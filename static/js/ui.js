@@ -25,7 +25,8 @@ const CATEGORIES = [
   [/smash|gam(e|ing)|esport|nintendo|video|league|valorant/, "🎮", 262, 315],
   [/board|card|tabletop|trivia|puzzle|chess/, "🎲", 24, 346],
   [/soccer|football/, "⚽", 142, 188],
-  [/basket|volley|tennis|sport|fitness|gym|run|ping|table-tennis|intramural|yoga|climb/, "🏀", 14, 42],
+  [/\brun\b|running|trail|marathon|5k|jog|cross-country/, "🏃", 18, 346],
+  [/basket|volley|tennis|sport|fitness|gym|ping|table-tennis|intramural|yoga|climb/, "🏀", 14, 42],
   [/music|concert|band|jam|dance|karaoke|dj|choir|open-mic/, "🎵", 318, 266],
   [/food|coffee|pizza|dinner|lunch|cook|bake|taco|snack|boba/, "🍕", 22, 48],
   [/art|design|craft|pottery|paint|photo|film|movie|theat|draw/, "🎨", 338, 18],
@@ -147,7 +148,11 @@ export async function transition(update) {
     // Name the page layer only for the duration of the transition, so the bars stay put.
     const view = document.getElementById("view");
     view.style.viewTransitionName = "page";
-    const vt = document.startViewTransition(update);
+    // If the browser never gets to run the callback (throttled frames), run it ourselves.
+    let started = null;
+    const once = () => (started ??= Promise.resolve(update()));
+    const vt = document.startViewTransition(once);
+    setTimeout(once, 400);
     const clear = () => {
       view.style.viewTransitionName = "";
     };
@@ -155,7 +160,7 @@ export async function transition(update) {
     // A hidden tab aborts the animation; the update itself still runs.
     vt.ready.catch(() => {});
     vt.finished.catch(() => {});
-    await vt.updateCallbackDone;
+    await once();
   } else {
     await update();
   }

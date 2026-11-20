@@ -105,7 +105,7 @@
   padding: 0.125rem var(--space-3);
   border-radius: var(--radius-full);
   background: var(--color-success);
-  color: #fff;
+  color: var(--color-on-success);
   font-size: var(--text-xs);
   font-weight: var(--weight-bold);
 }
@@ -935,7 +935,7 @@
 
 .actionbar .btn.is-on {
   background: var(--color-success);
-  color: #fff;
+  color: var(--color-on-success);
   box-shadow: none;
 }
 

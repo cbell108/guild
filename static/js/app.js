@@ -159,10 +159,29 @@ function setNavActive() {
   document.body.dataset.route = state.route;
 }
 
-/** Renders the current route's view into `#view`, with an error fallback. */
 let firstRender = true;
+let rendering = false;
+let rerender = false;
 
+/** Renders the current route; calls made mid-render are coalesced into one follow-up render. */
 async function renderRoute() {
+  if (rendering) {
+    rerender = true;
+    return;
+  }
+  rendering = true;
+  try {
+    do {
+      rerender = false;
+      await renderOnce();
+    } while (rerender);
+  } finally {
+    rendering = false;
+  }
+}
+
+/** Renders the current route's view into `#view`, with an error fallback. */
+async function renderOnce() {
   const { name, params, known } = parseHash();
   state.route = name;
   state.params = params;

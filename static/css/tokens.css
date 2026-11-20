@@ -34,6 +34,7 @@
   --color-success: #15803d;
   --color-success-soft: #dff5e7;
   --color-success-ink: #116534;
+  --color-on-success: #ffffff;
   --color-warning-soft: #fdecd0;
   --color-warning-ink: #8a4b07;
   --color-danger: #c42b2b;
@@ -127,6 +128,7 @@
     --color-success: #4ade80;
     --color-success-soft: #153324;
     --color-success-ink: #86efac;
+    --color-on-success: #052e14;
     --color-warning-soft: #3d2a10;
     --color-warning-ink: #fbbf6a;
     --color-danger: #f87171;
