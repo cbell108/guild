@@ -1,12 +1,12 @@
-# Pitch deck outline — campus-hangouts
+# Pitch deck outline — Guild
 
 Target: ≤ 4 minutes spoken, 13 slides, plus the 3-minute live demo cued on slide 6 (`docs/DEMO.md`).
-Build: `NODE_PATH=<dir with pptxgenjs> node docs/deck/build.js` → `docs/deck/campus-hangouts.pptx` (same text is in each slide's speaker notes; strip zip folder entries after building).
+Build: `NODE_PATH=<dir with pptxgenjs> node docs/deck/build.js` → `docs/deck/Guild.pptx` (same text is in each slide's speaker notes; strip zip folder entries after building).
 All numbers come from `docs/EVAL.md`, `docs/SPEC.md`, `docs/API.md`. Demo data is synthetic.
 
-## 1. Title — campus-hangouts
+## 1. Title — Guild
 *Never go alone.* KSU AI Club Hackathon 2026. `[TEAM NAMES]`
-Notes: "We built campus-hangouts: a web app that finds you the right campus event, shows who's going, and finds someone to go with." (10 s)
+Notes: "We built Guild: a web app that finds you the right campus event, shows who's going, and finds someone to go with." (10 s)
 
 ## 2. The problem
 - 64% of ~48,000 students felt very lonely in the past year (Chapman University news)

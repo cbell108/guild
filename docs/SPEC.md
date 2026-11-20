@@ -1,4 +1,4 @@
-# Product spec — campus-hangouts (working title)
+# Product spec — Guild 
 
 **Pitch line:** 64% of students feel very lonely, and every campus platform still assumes you'll show up alone.
 

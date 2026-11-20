@@ -1,4 +1,4 @@
-# campus-hangouts — agent guide
+# Guild — agent guide
 
 Web app for KSU campus events and informal hangouts, with a recommender.
 The Discord bot is one integration, not the core. Product spec: `docs/SPEC.md`.

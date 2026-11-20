@@ -1,5 +1,5 @@
 /**
- * Campus Hangouts — app shell.
+ * Guild — app shell.
  *
  * Boots the session, the hash router (`#/`, `#/browse`, `#/host`, `#/crews`,
  * `#/me`, `#/privacy`, `#/event/<id>`, `#/checkin/<id>`), the nav, the demo
@@ -209,7 +209,7 @@ async function renderOnce() {
       if (h1) {
         h1.setAttribute("tabindex", "-1");
         h1.focus({ preventScroll: true });
-        document.title = `${h1.textContent} · Campus Hangouts`;
+        document.title = `${h1.textContent} · Guild`;
       }
     } catch (err) {
       root.innerHTML = errorHtml(err);

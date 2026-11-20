@@ -1,9 +1,9 @@
-// Builds campus-hangouts.pptx. Run: NODE_PATH=<dir with pptxgenjs> node docs/deck/build.js
+// Builds Guild.pptx. Run: NODE_PATH=<dir with pptxgenjs> node docs/deck/build.js
 const pptxgen = require("pptxgenjs");
 const path = require("path");
 const pres = new pptxgen();
 pres.layout = "LAYOUT_16x9"; // 10 x 5.625 in
-pres.title = "campus-hangouts";
+pres.title = "Guild";
 pres.theme = { headFontFace: "Cambria", bodyFontFace: "Calibri" };
 
 const INK = "1A1A1A", GOLD = "FDBB30", PAPER = "FFFFFF", SOFT = "F3F3F1", MUTED = "5F5F5F", GREEN = "2E7D5B";
@@ -33,11 +33,11 @@ function card(s, x, y, w, h, fill) {
 // 1 Title
 {
   const s = pres.addSlide({ masterName: "DARK" });
-  T(s, "campus-hangouts", { x: 0.6, y: 1.5, w: 8.8, h: 1.0, fontFace: "Cambria", fontSize: 54, bold: true, color: PAPER });
+  T(s, "Guild", { x: 0.6, y: 1.5, w: 8.8, h: 1.0, fontFace: "Cambria", fontSize: 54, bold: true, color: PAPER });
   T(s, "Never go alone.", { x: 0.6, y: 2.6, w: 8.8, h: 0.6, fontSize: 28, color: GOLD, italic: true });
   T(s, "Events and hangouts for KSU, with someone to go with", { x: 0.6, y: 3.3, w: 8.8, h: 0.4, fontSize: 18, color: "DDDDDD" });
   T(s, "KSU AI Club Hackathon 2026  ·  [TEAM NAMES]", { x: 0.6, y: 4.7, w: 8.8, h: 0.3, fontSize: 14, color: "BBBBBB" });
-  s.addNotes("We built campus-hangouts: a web app that finds you the right campus event, shows which friends are going, and finds someone to go with. (10 s)");
+  s.addNotes("We built Guild: a web app that finds you the right campus event, shows which friends are going, and finds someone to go with. (10 s)");
 }
 
 // 2 Problem
@@ -237,4 +237,4 @@ function card(s, x, y, w, h, fill) {
   s.addNotes("Thank the judges, introduce the team, take questions. (5 s)");
 }
 
-pres.writeFile({ fileName: path.join(__dirname, "campus-hangouts.pptx") }).then(() => console.log("written"));
+pres.writeFile({ fileName: path.join(__dirname, "Guild.pptx") }).then(() => console.log("written"));

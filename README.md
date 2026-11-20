@@ -1,8 +1,8 @@
-# campus-hangouts
+# Guild
 
 > 64% of students feel very lonely, and every campus platform still assumes you'll show up alone.
 
-campus-hangouts is a web app that puts KSU's official calendar events and student-hosted hangouts
+Guild is a web app that puts KSU's official calendar events and student-hosted hangouts
 in one "For you" feed. It explains why each recommendation is there, shows which friends are
 going, and matches you with someone to go with. A Discord bot is one integration, not the core.
 
