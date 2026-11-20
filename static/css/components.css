@@ -286,13 +286,13 @@
     transform: scaleX(1);
   }
 
-  .day {
+  .b-list .day {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: stretch;
   }
 
-  .day__head {
+  .b-list .day__head {
     grid-column: 1 / -1;
   }
 
