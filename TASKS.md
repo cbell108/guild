@@ -60,5 +60,5 @@ Your branch has Lane A's `store` as stubs (`StoreError::NotImplemented`). Test p
 
 ## Lane M — night queue (local model, RX 9070 XT) · tests only, never `static/`
 - [x] M1 More `crates/ingest` tests in `crates/ingest/tests/mapping_edge_cases.rs` using inline JSON: virtual event with no location → "Online"; HTML entities in titles decoded or kept readable; duplicate instance ids deduplicated; events with an end before the start get the default length; tags normalized and capped.
-- [ ] M2 More `crates/store` tests in a new file `crates/store/tests/edge_cases.rs`: `search_users` treats `%` and `_` literally; `list_events` with `tags` matches any tag; `remove_friend` works in both directions; `delete_history` keeps friendships and crews; `set_availability` replaces the same local date only.
+- [x] M2 More `crates/store` tests in a new file `crates/store/tests/edge_cases.rs`: `search_users` treats `%` and `_` literally; `list_events` with `tags` matches any tag; `remove_friend` works in both directions; `delete_history` keeps friendships and crews; `set_availability` replaces the same local date only.
 - [ ] M3 Bot helper tests in `crates/bot/tests/` for message formatting helpers (roster text, availability chart lines incl. "(overnight)", gear list) against the functions in `crates/bot/src/helpers.rs`.
