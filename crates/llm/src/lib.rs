@@ -1,12 +1,14 @@
 //! Client for the local OpenAI-compatible LLM server (llama.cpp router) and the
 //! natural-language → [`HangoutDraft`] feature.
 //!
-//! Public surface: [`LlmConfig`], [`LlmClient`], [`parse_hangout`], [`LlmError`].
+//! Public surface: [`LlmConfig`], [`LlmClient`], [`parse_hangout`], [`interpret_search`],
+//! [`LlmError`].
 //! Everything degrades gracefully: callers treat [`LlmError::Unavailable`] and
 //! [`LlmError::BadResponse`] as "feature unavailable" (HTTP 503), and tests never need a
 //! running server.
 
 pub mod hangout;
+pub mod search;
 
 use std::time::Duration;
 
@@ -136,6 +138,42 @@ pub async fn parse_hangout(
     hangout::parse_response(&body).map(|draft| hangout::refine(draft, text, now))
 }
 
+/// Turns a request ("something chill tonight with food") into Browse filters plus a one-line
+/// summary. `known_tags` is the vocabulary the model may choose tags from (the result is
+/// restricted to it). Blank input returns an empty intent without calling the server.
+pub async fn interpret_search(
+    client: &LlmClient,
+    text: &str,
+    now: DateTime<Utc>,
+    known_tags: &[String],
+) -> Result<search::SearchIntent, LlmError> {
+    let text = text.trim();
+    if text.is_empty() {
+        return Ok(search::SearchIntent::default());
+    }
+    let url = format!(
+        "{}/chat/completions",
+        client.config.base_url.trim_end_matches('/')
+    );
+    let request = search::request(&client.config.model, text, now, known_tags);
+    let response = client
+        .http
+        .post(url)
+        .json(&request)
+        .send()
+        .await
+        .map_err(|e| LlmError::Unavailable(e.to_string()))?;
+    let status = response.status();
+    if !status.is_success() {
+        return Err(LlmError::Unavailable(format!("server returned {status}")));
+    }
+    let body = response
+        .text()
+        .await
+        .map_err(|e| LlmError::Unavailable(e.to_string()))?;
+    search::parse_response(&body, known_tags)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -163,5 +201,34 @@ mod tests {
         assert!(!c.health().await);
         let err = parse_hangout(&c, "smash tonight", Utc::now()).await;
         assert!(matches!(err, Err(LlmError::Unavailable(_))), "{err:?}");
+    }
+
+    #[tokio::test]
+    async fn interpret_blank_needs_no_server() {
+        let c = client("http://127.0.0.1:9/v1");
+        let i = interpret_search(&c, " ", Utc::now(), &[]).await.unwrap();
+        assert_eq!(i, search::SearchIntent::default());
+    }
+
+    #[tokio::test]
+    async fn interpret_server_down_is_unavailable() {
+        let c = client("http://127.0.0.1:9/v1");
+        let err = interpret_search(&c, "free food tonight", Utc::now(), &[]).await;
+        assert!(matches!(err, Err(LlmError::Unavailable(_))), "{err:?}");
+    }
+
+    /// Live check against the local router (`cargo test -p llm -- --ignored`).
+    #[tokio::test]
+    #[ignore = "needs the local LLM server"]
+    async fn live_interpret_search() {
+        let c = LlmClient::new(LlmConfig::from_env()).unwrap();
+        let known: Vec<String> = ["food", "free-food", "music", "sports"]
+            .map(String::from)
+            .to_vec();
+        let i = interpret_search(&c, "free food tonight", Utc::now(), &known)
+            .await
+            .unwrap();
+        assert_eq!(i.when, Some(search::SearchWhen::Today), "{i:?}");
+        assert!(i.tags.iter().any(|t| t.contains("food")), "{i:?}");
     }
 }
