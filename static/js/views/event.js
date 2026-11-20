@@ -1,175 +1,200 @@
 /**
- * Event detail view (B3): details, Interested / Going / Going-with buttons,
- * the "looking for a buddy" toggle with its match, and an add-to-calendar link.
+ * Event page: full-bleed hero cover (back / calendar / share over it), icon
+ * rows, friends, description, buddy card and a sticky action bar with
+ * optimistic Going / Interested / Going with… (rolled back on error).
  */
 import { api } from "../api.js";
 import { esc, fmtEventTime } from "../util.js";
-import { kindBadge, placeLine, friendLine, intentLabel, spotsText } from "../components.js";
+import { cover, dateBadgeHtml, avatar, avatarStack, openSheet, toast } from "../ui.js";
+import { kindChip, placeLine, friendLine, intentLabel, spotsText } from "../components.js";
 
-const LEVELS = [
-  ["interested", "Interested"],
-  ["going", "Going"],
-  ["going_with", "Going with…"],
-];
+/** Icon + text row. */
+const row = (icon, html) =>
+  `<li class="irow"><span class="irow__icon"><svg class="icon" aria-hidden="true"><use href="#i-${icon}" /></svg></span><span class="irow__text">${html}</span></li>`;
 
-/** Renders the buddy block from a `BuddyStatus`. */
+/** Buddy block from a `BuddyStatus`. */
 function buddyHtml(status) {
   const match = status.matched;
   let result = "";
   if (status.looking && match) {
-    result = `<p class="buddy-match"><strong>${esc(match.user.display_name)}</strong>
-      ${match.is_friend ? '<span class="chip">Friend</span>' : ""}<br>
-      <span class="muted">${esc(match.reason)}</span></p>`;
+    result = `<div class="buddy-match">${avatar(match.user, "avatar--md")}
+      <div><strong>${esc(match.user.display_name)}</strong>${match.is_friend ? ' <span class="chip">Friend</span>' : ""}
+      <p class="muted">${esc(match.reason)}</p></div></div>`;
   } else if (status.looking) {
     result = `<p class="muted">You're on the list — we'll show a match as soon as someone fits.</p>`;
   }
-  return `
-    <label class="toggle">
-      <input type="checkbox" id="buddy-toggle" ${status.looking ? "checked" : ""} />
-      <span>Looking for a buddy</span>
-    </label>
-    <div id="buddy-result" aria-live="polite">${result}</div>`;
+  return `<label class="toggle"><input type="checkbox" id="buddy-toggle" ${status.looking ? "checked" : ""} />
+      <span>Looking for a buddy</span></label><div id="buddy-result" aria-live="polite">${result}</div>`;
 }
 
-/** Renders the event detail view. */
+/** Renders the event page. */
 export default {
   name: "event",
   async render(root, { state, params }) {
-    root.innerHTML = `<p class="muted" role="status">Loading event…</p>`;
-    const ev = await api.get(`/api/events/${encodeURIComponent(params.id)}`);
+    root.innerHTML = `<div class="skel skel-hero" aria-hidden="true"></div>
+      <div class="skel skel-title" aria-hidden="true"></div>`;
+    const id = encodeURIComponent(params.id);
+    const ev = await api.get(`/api/events/${id}`);
     const me = state.me;
     let my = ev.my_intent;
     let buddy = { looking: ev.buddy_looking, matched: null };
     if (me && ev.buddy_looking) {
       try {
-        buddy = await api.get(`/api/events/${encodeURIComponent(ev.id)}/buddy`);
+        buddy = await api.get(`/api/events/${id}/buddy`);
       } catch {
-        /* buddy match is optional */
+        /* optional */
       }
     }
 
-    const spots = spotsText(ev);
     const friends = friendLine(ev.friends);
-    const meta = [
-      ["When", esc(fmtEventTime(ev.starts_at, ev.ends_at))],
-      ["Where", placeLine(ev.location)],
-      ev.host ? ["Host", esc(ev.host.display_name)] : null,
-      ev.organizer ? ["Organizer", esc(ev.organizer)] : null,
-      ev.crew ? ["Crew", esc(ev.crew.name)] : null,
-      friends ? ["Friends", `<strong>${esc(friends)}</strong>`] : null,
-      spots ? ["Spots", esc(spots)] : null,
-    ]
-      .filter(Boolean)
-      .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`)
-      .join("");
+    const spots = spotsText(ev);
+    const isHost = Boolean(me && ev.host && ev.host.id === me.user.id);
+    const f = ev.friends;
+    const heroInner = `${dateBadgeHtml(ev.starts_at)}
+      <a class="hero-btn hero-btn--back" href="#/" data-back aria-label="Back"><svg class="icon" aria-hidden="true"><use href="#i-back" /></svg></a>
+      <span class="hero-actions">
+        <a class="hero-btn" href="${esc(ev.calendar_url)}" download aria-label="Add to calendar"><svg class="icon" aria-hidden="true"><use href="#i-calendar" /></svg></a>
+        <button type="button" class="hero-btn" id="share" aria-label="Share"><svg class="icon" aria-hidden="true"><use href="#i-share" /></svg></button>
+      </span>`;
 
     root.innerHTML = `
-      <p><a class="back-link" href="#/">← Back</a></p>
-      <article class="card event-detail">
-        ${ev.image_url ? `<img class="event-detail__img" src="${esc(ev.image_url)}" alt="" loading="lazy" onerror="this.remove()" />` : ""}
-        <div class="event-detail__body">
-          ${kindBadge(ev.kind)}
+      <article class="event">
+        <div class="event__hero">${cover(ev, heroInner)}</div>
+        <div class="event__main">
+          <p class="event__kind">${kindChip(ev.kind)}${ev.crew ? "" : ""}</p>
           <h1>${esc(ev.title)}</h1>
-          <dl class="detail-meta">${meta}</dl>
-          <p class="event-detail__desc">${esc(ev.description || "")}</p>
-          <div class="chips">${(ev.tags || []).map((t) => `<span class="chip">#${esc(t)}</span>`).join("")}</div>
+          <ul class="irows">
+            ${row("clock", esc(fmtEventTime(ev.starts_at, ev.ends_at)))}
+            ${row("pin", placeLine(ev.location))}
+            ${ev.host ? row("user", `Hosted by <strong>${esc(ev.host.display_name)}</strong>`) : ""}
+            ${ev.organizer ? row("user", esc(ev.organizer)) : ""}
+            ${ev.crew ? row("users", `Crew · ${esc(ev.crew.name)}`) : ""}
+            ${spots ? row("star", esc(spots)) : ""}
+          </ul>
+          ${
+            friends
+              ? `<p class="social social--lg">${avatarStack(f.sample || [], Math.max(0, f.going + (f.going ? 0 : f.interested) - Math.min(3, (f.sample || []).length)))}<span>${esc(friends)}</span></p>`
+              : ""
+          }
+          ${ev.description ? `<p class="event__desc">${esc(ev.description)}</p>` : ""}
+          <p class="chips">${(ev.tags || []).map((t) => `<span class="chip">#${esc(t)}</span>`).join("")}</p>
           ${ev.url ? `<p><a href="${esc(ev.url)}" target="_blank" rel="noopener noreferrer">View on the KSU calendar ↗</a></p>` : ""}
+          ${isHost ? `<p><a class="btn btn--ghost" href="#/checkin/${esc(ev.id)}">Open check-in</a></p>` : ""}
+          ${
+            me
+              ? `<section class="panel panel--stretch" aria-labelledby="buddy-h"><h2 id="buddy-h">Find a buddy</h2>
+                   <p class="muted">Don't want to go alone? We'll suggest someone who'd get along.</p>
+                   <div id="buddy">${buddyHtml(buddy)}</div></section>`
+              : ""
+          }
         </div>
       </article>
-
-      <section class="card panel" aria-labelledby="attend-h">
-        <h2 id="attend-h">Your plans</h2>
+      <div class="actionbar" role="group" aria-label="Your plans">
         ${
           me
-            ? `<p id="intent-status" class="status-line" aria-live="polite"></p>
-               <div class="seg" role="group" aria-label="Your attendance">
-                 ${LEVELS.map(([v, l]) => `<button type="button" class="btn btn--ghost" data-level="${v}">${l}</button>`).join("")}
-               </div>
-               <div id="with-picker" class="with-picker" hidden></div>
-               <button type="button" class="btn btn--ghost btn--sm" id="cant-make-it" hidden>Can't make it</button>
-               <p id="intent-error" class="form-error" role="alert" hidden></p>`
-            : `<p class="muted">Sign in (top right) to say you're interested or going.</p>`
+            ? `<p class="actionbar__status" aria-live="polite"><span id="intent-status"></span>
+                 <button type="button" class="link-btn" id="cant" hidden>Can't make it</button></p>
+               <div class="actionbar__row">
+                 <button type="button" class="btn btn--ghost" data-level="interested">Interested</button>
+                 <button type="button" class="btn btn--primary actionbar__main" data-level="going">Going</button>
+                 <button type="button" class="btn btn--ghost" data-level="going_with">With…</button>
+               </div>`
+            : `<button type="button" class="btn btn--primary btn--block" data-signin>Sign in to say you're going</button>`
         }
-        <a class="btn btn--ghost btn--sm" href="${esc(ev.calendar_url)}" download>Add to calendar</a>
-        ${me && ev.host && ev.host.id === me.user.id ? `<a class="btn btn--ghost btn--sm" href="#/checkin/${esc(ev.id)}">Open check-in</a>` : ""}
-      </section>
+      </div>`;
 
-      ${
-        me
-          ? `<section class="card panel" aria-labelledby="buddy-h">
-               <h2 id="buddy-h">Find a buddy</h2>
-               <p class="muted">Don't want to go alone? Say so and we'll suggest someone who'd get along.</p>
-               <div id="buddy">${buddyHtml(buddy)}</div>
-             </section>`
-          : ""
-      }`;
-
+    // Back: real history when we came from inside the app.
+    root.querySelector("[data-back]").addEventListener("click", (e) => {
+      if (window.history.length > 1) {
+        e.preventDefault();
+        window.history.back();
+      }
+    });
+    root.querySelector("#share").addEventListener("click", async () => {
+      const url = window.location.href;
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: ev.title, url });
+          return;
+        }
+        await navigator.clipboard.writeText(url);
+        toast("Link copied");
+      } catch (err) {
+        if (err && err.name !== "AbortError") toast("Couldn't share — copy the address bar link");
+      }
+    });
+    root.querySelector("[data-signin]")?.addEventListener("click", () => state.openLogin());
     if (!me) return;
 
-    const statusEl = root.querySelector("#intent-status");
-    const errEl = root.querySelector("#intent-error");
-    const cant = root.querySelector("#cant-make-it");
-    const picker = root.querySelector("#with-picker");
+    const status = root.querySelector("#intent-status");
+    const cant = root.querySelector("#cant");
     const buttons = [...root.querySelectorAll("[data-level]")];
-
     const paint = () => {
       const label = intentLabel(my);
-      statusEl.textContent = label ? `You: ${label}` : "You haven't responded yet.";
+      status.textContent = label ? `You: ${label}` : "Are you in?";
       buttons.forEach((b) => {
-        const on = my && my.level === b.dataset.level;
-        b.classList.toggle("is-selected", Boolean(on));
-        b.setAttribute("aria-pressed", String(Boolean(on)));
+        const on = Boolean(my && my.level === b.dataset.level);
+        b.setAttribute("aria-pressed", String(on));
+        b.classList.toggle("is-on", on);
       });
       cant.hidden = !my;
     };
-    const fail = (err) => {
-      errEl.textContent = err && err.message ? err.message : "Something went wrong";
-      errEl.hidden = false;
-    };
-    const setIntent = async (level, withId) => {
-      errEl.hidden = true;
+
+    /** Optimistic update: show it now, roll back if the API says no. */
+    const setIntent = async (level, withUser) => {
+      const before = my;
+      my = { level, with: withUser || null, status: "confirmed", waitlist_position: null };
+      paint();
       try {
-        my = await api.put(`/api/events/${encodeURIComponent(ev.id)}/intent`, {
-          level,
-          with: withId || null,
-        });
-        picker.hidden = true;
+        my = await api.put(`/api/events/${id}/intent`, { level, with: withUser ? withUser.id : null });
         paint();
+        toast(my.status === "waitlisted" ? "You're on the waitlist" : level === "interested" ? "Marked interested" : "You're going 🎉");
       } catch (err) {
-        fail(err);
+        my = before;
+        paint();
+        toast(err.message || "Couldn't save that — try again");
       }
     };
 
     buttons.forEach((b) =>
       b.addEventListener("click", async () => {
         if (b.dataset.level !== "going_with") return setIntent(b.dataset.level);
-        errEl.hidden = true;
-        picker.hidden = false;
-        picker.innerHTML = `<span class="muted">Loading friends…</span>`;
+        let list = [];
         try {
-          const { friends: list } = await api.get("/api/friends");
-          picker.innerHTML = list.length
-            ? `<span class="muted">Going with:</span> ${list
-                .map((f) => `<button type="button" class="chip chip--btn" data-friend="${esc(f.id)}">${esc(f.display_name)}</button>`)
-                .join("")}`
-            : `<span class="muted">Add a friend first to go together.</span>`;
-          picker.querySelectorAll("[data-friend]").forEach((fb) =>
-            fb.addEventListener("click", () => setIntent("going_with", fb.dataset.friend)),
-          );
+          list = (await api.get("/api/friends")).friends;
         } catch (err) {
-          picker.hidden = true;
-          fail(err);
+          toast(err.message || "Couldn't load friends");
+          return;
         }
+        openSheet(
+          "Going with…",
+          list.length
+            ? `<ul class="people">${list
+                .map((u) => `<li><button type="button" class="person person--btn" data-friend="${esc(u.id)}">${avatar(u, "avatar--md")}
+                  <span class="person__meta"><strong>${esc(u.display_name)}</strong><span class="muted">${esc(u.bio || "")}</span></span></button></li>`)
+                .join("")}</ul>`
+            : `<p class="muted">Add a friend first (Me → Friends) to go together.</p>`,
+          (body, close) =>
+            body.querySelectorAll("[data-friend]").forEach((fb) =>
+              fb.addEventListener("click", () => {
+                close();
+                setIntent("going_with", list.find((u) => u.id === fb.dataset.friend));
+              }),
+            ),
+        );
       }),
     );
     cant.addEventListener("click", async () => {
-      errEl.hidden = true;
+      const before = my;
+      my = null;
+      paint();
       try {
-        await api.del(`/api/events/${encodeURIComponent(ev.id)}/intent`);
-        my = null;
-        paint();
+        await api.del(`/api/events/${id}/intent`);
+        toast("Removed — see you next time");
       } catch (err) {
-        fail(err);
+        my = before;
+        paint();
+        toast(err.message || "Couldn't update that");
       }
     });
     paint();
@@ -179,11 +204,12 @@ export default {
       const box = buddyRoot.querySelector("#buddy-toggle");
       box.addEventListener("change", async () => {
         box.disabled = true;
+        const want = box.checked;
         try {
-          buddy = await api.post(`/api/events/${encodeURIComponent(ev.id)}/buddy`, { looking: box.checked });
+          buddy = await api.post(`/api/events/${id}/buddy`, { looking: want });
+          toast(want ? "We'll look for a buddy" : "Buddy search off");
         } catch (err) {
-          box.checked = !box.checked;
-          fail(err);
+          toast(err.message || "Couldn't update that");
         }
         buddyRoot.innerHTML = buddyHtml(buddy);
         bindBuddy();
