@@ -46,7 +46,7 @@ Your branch has Lane A's `store` as stubs (`StoreError::NotImplemented`). Test p
 - [x] C4 MUST Social scorer: friend boost + attendance probability (logistic regression on intent level, days ahead, friends going, past show rate; trained on seed history; prior fallback).
 - [x] C5 MUST Hybrid `feed()`: weighted sum, configurable weights, reasons from top contributing component(s) in plain English. Tests assert reasons.
 - [x] C6 MUST `similar_users()` for buddy matching (interest + co-attendance similarity).
-- [ ] C7 MUST Collaborative scorer: item-item over implicit feedback (check-in 3, going 2, interested 1).
+- [x] C7 MUST Collaborative scorer: item-item over implicit feedback (check-in 3, going 2, interested 1).
 - [ ] C8 MUST Offline eval binary (`crates/eval`, on `seed::generate()`): hold out last week, precision@5 + recall@10 for hybrid vs popularity baseline vs content-only; write table to `docs/EVAL.md` (pitch slide).
 - [ ] C9 `llm::parse_hangout` via JSON-schema-constrained chat completion; unit-test the prompt/parse with a recorded response.
 - [ ] C10 `bot`: port `/game`, `/availability`, `/gear` from the prototype to poise; `/hangout` creates an Event + Discord Scheduled Event; buttons write intents. Test pure helpers; no token needed overnight.

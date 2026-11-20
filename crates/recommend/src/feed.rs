@@ -80,7 +80,7 @@ impl Default for FeedConfig {
 }
 
 /// At most this many reasons per card.
-pub const MAX_REASONS: usize = 2;
+pub const MAX_REASONS: usize = 3;
 /// A second reason is shown only if its component added at least this much to the score.
 pub const MIN_SECOND_REASON: f64 = 0.05;
 
@@ -224,10 +224,21 @@ mod tests {
         );
         assert_eq!(
             texts(&recs[0]),
-            vec!["Because you like board games and tabletop", "Carl is going"]
+            vec![
+                "Because you like board games and tabletop",
+                "Regulars at Tabletop Tuesday are going",
+                "Carl is going"
+            ]
         );
-        assert_eq!(recs[0].reasons[0].kind, ReasonKind::Content);
-        assert_eq!(recs[0].reasons[1].kind, ReasonKind::Social);
+        let kinds: Vec<ReasonKind> = recs[0].reasons.iter().map(|r| r.kind).collect();
+        assert_eq!(
+            kinds,
+            vec![
+                ReasonKind::Content,
+                ReasonKind::Collaborative,
+                ReasonKind::Social
+            ]
+        );
     }
 
     #[test]
@@ -304,9 +315,10 @@ mod tests {
             reasons(&[
                 (0.4, Some(r("a"))),
                 (0.1, Some(r("b"))),
-                (0.3, Some(r("c")))
+                (0.3, Some(r("c"))),
+                (0.2, Some(r("d")))
             ]),
-            vec![r("a"), r("c")]
+            vec![r("a"), r("c"), r("d")]
         );
         assert_eq!(
             reasons(&[(0.4, Some(r("a"))), (0.01, Some(r("b"))), (0.2, None)]),
