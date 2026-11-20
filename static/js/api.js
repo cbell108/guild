@@ -137,12 +137,17 @@ export async function apiFetch(method, path, { body, as = "json" } = {}) {
     headers["Content-Type"] = "application/json";
     payload = JSON.stringify(body);
   }
-  const res = await fetch(path, {
-    method,
-    headers,
-    body: payload,
-    credentials: "same-origin",
-  });
+  let res;
+  try {
+    res = await fetch(path, {
+      method,
+      headers,
+      body: payload,
+      credentials: "same-origin",
+    });
+  } catch {
+    throw new ApiHttpError(0, "network", "Can't reach the server. Check your connection and try again.");
+  }
   if (res.status === 204) return null;
   const text = await res.text();
   let data = null;

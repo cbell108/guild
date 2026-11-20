@@ -5,26 +5,44 @@
  */
 import { api } from "../api.js";
 import { esc, fmtEventTime } from "../util.js";
-import { cover, dateBadgeHtml, avatar, avatarStack, openSheet, toast } from "../ui.js";
+import { cover, dateBadgeHtml, avatar, avatarStack, openSheet, toast, reducedMotion, errorHtml, stateHtml } from "../ui.js";
 import { kindChip, placeLine, friendLine, intentLabel, spotsText } from "../components.js";
 
 /** Icon + text row. */
 const row = (icon, html) =>
   `<li class="irow"><span class="irow__icon"><svg class="icon" aria-hidden="true"><use href="#i-${icon}" /></svg></span><span class="irow__text">${html}</span></li>`;
 
-/** Buddy block from a `BuddyStatus`. */
+/** Buddy card body from a `BuddyStatus`: switch row plus the match (or a waiting note). */
 function buddyHtml(status) {
   const match = status.matched;
   let result = "";
   if (status.looking && match) {
     result = `<div class="buddy-match">${avatar(match.user, "avatar--md")}
       <div><strong>${esc(match.user.display_name)}</strong>${match.is_friend ? ' <span class="chip">Friend</span>' : ""}
-      <p class="muted">${esc(match.reason)}</p></div></div>`;
+      <p>${esc(match.reason)}</p></div></div>`;
   } else if (status.looking) {
-    result = `<p class="muted">You're on the list — we'll show a match as soon as someone fits.</p>`;
+    result = `<p class="buddy-wait">⏳ You're on the list — we'll show a match as soon as someone fits.</p>`;
   }
-  return `<label class="toggle"><input type="checkbox" id="buddy-toggle" ${status.looking ? "checked" : ""} />
-      <span>Looking for a buddy</span></label><div id="buddy-result" aria-live="polite">${result}</div>`;
+  return `<div class="row buddy-row"><label class="row__main" for="buddy-toggle"><strong>Looking for a buddy</strong>
+      <span class="muted">Share the plan with someone new</span></label>
+      <span class="switch"><input type="checkbox" id="buddy-toggle" ${status.looking ? "checked" : ""} /><span class="switch__track"></span></span></div>
+    <div id="buddy-result" aria-live="polite">${result}</div>`;
+}
+
+/** Small celebratory burst + pop on the element (skipped for reduced motion). */
+function celebrate(el) {
+  if (!el || reducedMotion()) return;
+  el.classList.remove("pop");
+  void el.offsetWidth;
+  el.classList.add("pop");
+  const burst = document.createElement("span");
+  burst.className = "burst";
+  burst.setAttribute("aria-hidden", "true");
+  burst.innerHTML = ["🎉", "✨", "💜", "✨", "🎉", "💜"]
+    .map((e, i) => `<span style="--a:${i * 60 - 150}deg">${e}</span>`)
+    .join("");
+  el.appendChild(burst);
+  setTimeout(() => burst.remove(), 900);
 }
 
 /** Renders the event page. */
@@ -34,7 +52,19 @@ export default {
     root.innerHTML = `<div class="skel skel-hero" aria-hidden="true"></div>
       <div class="skel skel-title" aria-hidden="true"></div>`;
     const id = encodeURIComponent(params.id);
-    const ev = await api.get(`/api/events/${id}`);
+    let ev;
+    try {
+      ev = await api.get(`/api/events/${id}`);
+    } catch (err) {
+      root.innerHTML = err.status === 404
+        ? stateHtml({ emoji: "🧭", title: "Event not found", text: "It may have been removed.", action: "Browse events" })
+        : errorHtml(err);
+      root.querySelector("[data-action]").addEventListener("click", () => {
+        if (err.status === 404) window.location.hash = "#/browse";
+        else window.location.reload();
+      });
+      return;
+    }
     const me = state.me;
     let my = ev.my_intent;
     let buddy = { looking: ev.buddy_looking, matched: null };
@@ -82,9 +112,10 @@ export default {
           ${isHost ? `<p><a class="btn btn--ghost" href="#/checkin/${esc(ev.id)}">Open check-in</a></p>` : ""}
           ${
             me
-              ? `<section class="panel panel--stretch" aria-labelledby="buddy-h"><h2 id="buddy-h">Find a buddy</h2>
-                   <p class="muted">Don't want to go alone? We'll suggest someone who'd get along.</p>
-                   <div id="buddy">${buddyHtml(buddy)}</div></section>`
+              ? `<section class="buddy-card" aria-labelledby="buddy-h">
+                   <h2 id="buddy-h"><span aria-hidden="true">🤝</span> Don't want to go alone?</h2>
+                   <p class="muted">Turn this on and we'll suggest someone who'd get along.</p>
+                   <div id="buddy" class="buddy-card__box">${buddyHtml(buddy)}</div></section>`
               : ""
           }
         </div>
@@ -149,6 +180,7 @@ export default {
         my = await api.put(`/api/events/${id}/intent`, { level, with: withUser ? withUser.id : null });
         paint();
         toast(my.status === "waitlisted" ? "You're on the waitlist" : level === "interested" ? "Marked interested" : "You're going 🎉");
+        if (my.status !== "waitlisted") celebrate(root.querySelector(`[data-level="${level}"]`));
       } catch (err) {
         my = before;
         paint();

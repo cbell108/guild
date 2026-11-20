@@ -91,7 +91,7 @@
   /* --- Layout ------------------------------------------------------------------- */
   --topbar-height: 3.5rem;
   --tabbar-height: 4rem;
-  --content-max: 72rem;
+  --content-max: 68.75rem;
   --page-pad: 1rem;
   --tap: 2.75rem; /* 44px minimum target */
   --safe-bottom: env(safe-area-inset-bottom, 0px);

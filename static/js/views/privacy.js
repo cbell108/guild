@@ -1,8 +1,16 @@
 /**
- * "Privacy" view (B7): attendance visibility, buddy matching, personalization,
- * and deleting activity history. Reached from the user chip in the header.
+ * "Privacy" view: attendance visibility (segmented), buddy matching and
+ * personalization switches, and a confirm sheet for deleting activity history.
  */
 import { api } from "../api.js";
+import { esc } from "../util.js";
+import { openSheet, toast } from "../ui.js";
+
+/** One switch row. */
+const switchRow = (name, icon, title, hint, checked) => `<li class="row">
+  <span class="row__icon"><svg class="icon" aria-hidden="true"><use href="#i-${icon}" /></svg></span>
+  <label class="row__main" for="sw-${name}"><strong>${esc(title)}</strong><span class="muted">${esc(hint)}</span></label>
+  <span class="switch"><input type="checkbox" id="sw-${name}" name="${name}" ${checked ? "checked" : ""} /><span class="switch__track"></span></span></li>`;
 
 /** Renders the privacy settings view. */
 export default {
@@ -10,68 +18,78 @@ export default {
   async render(root, { state }) {
     const head = `
       <a class="back-link" href="#/me"><svg class="icon" aria-hidden="true"><use href="#i-back" /></svg> Me</a>
-      <header class="view-head">
-        <h1>Privacy</h1>
-        <p class="lede">You decide what friends can see. There are no public attendee lists or follower counts.</p>
-      </header>`;
+      <header class="view-head"><h1>Privacy</h1>
+        <p class="lede">You decide what friends can see. No public attendee lists or follower counts.</p></header>`;
     if (!state.me) {
-      root.innerHTML = `${head}<section class="empty"><h2>Sign in first</h2>
-        <p>Use the Sign in button (top right) to pick a demo student.</p></section>`;
+      root.innerHTML = `${head}<section class="empty"><span class="empty__emoji" aria-hidden="true">🔒</span><h2>Sign in first</h2>
+        <button type="button" class="btn btn--primary" data-signin>Sign in</button></section>`;
+      root.querySelector("[data-signin]").addEventListener("click", () => state.openLogin());
       return;
     }
     let p = await api.get("/api/me/privacy");
-    root.innerHTML = `${head}
-      <form class="panel panel--stretch" id="privacy-form">
-        <label class="field"><span>Who can see which events I'm going to</span>
-          <select name="attendance">
-            <option value="friends">My friends</option>
-            <option value="private">Only me</option>
-          </select></label>
-        <label class="toggle"><input type="checkbox" name="buddy_matching" /> <span>Let others find me as a buddy match</span></label>
-        <label class="toggle"><input type="checkbox" name="personalize" /> <span>Personalize my feed from my activity</span></label>
-        <p id="p-msg" class="muted" role="status" aria-live="polite"></p>
-      </form>
-      <section class="panel panel--stretch">
-        <h2>Delete my activity</h2>
-        <p class="muted">Removes your intents, check-ins, buddy requests and availability. Your account, friends and crews stay.</p>
-        <button type="button" class="btn btn--ghost btn--sm" id="del-history">Delete my history</button>
-        <p id="d-msg" class="muted" role="status" aria-live="polite"></p>
-      </section>`;
 
-    const form = root.querySelector("#privacy-form");
-    const msg = root.querySelector("#p-msg");
     const paint = () => {
-      form.elements.attendance.value = p.attendance;
-      form.elements.buddy_matching.checked = p.buddy_matching;
-      form.elements.personalize.checked = p.personalize;
+      root.innerHTML = `${head}
+        <section class="stack" aria-labelledby="vis-h">
+          <h2 id="vis-h" class="sub">Who can see which events you're going to</h2>
+          <div class="segmented" role="group" aria-labelledby="vis-h">
+            <button type="button" data-att="friends" aria-pressed="${p.attendance === "friends"}">My friends</button>
+            <button type="button" data-att="private" aria-pressed="${p.attendance === "private"}">Only me</button>
+          </div>
+        </section>
+        <ul class="group" aria-label="Preferences">
+          ${switchRow("buddy_matching", "users", "Buddy matching", "Let others find you as a buddy for events", p.buddy_matching)}
+          ${switchRow("personalize", "sparkles", "Personalized feed", "Use your activity to pick events for you", p.personalize)}
+        </ul>
+        <div class="group"><button type="button" class="row row--danger" id="del-history">
+          <span class="row__icon"><svg class="icon" aria-hidden="true"><use href="#i-close" /></svg></span>
+          <span class="row__main"><strong>Delete my activity</strong><span class="muted">Intents, check-ins, buddy requests, availability</span></span></button></div>`;
+      bind();
     };
-    paint();
-    form.addEventListener("change", async () => {
-      const next = {
-        attendance: form.elements.attendance.value,
-        buddy_matching: form.elements.buddy_matching.checked,
-        personalize: form.elements.personalize.checked,
-      };
-      msg.textContent = "Saving…";
+
+    const save = async (next) => {
+      const before = p;
+      p = next;
+      paint(); // optimistic
       try {
         p = await api.put("/api/me/privacy", next);
-        msg.textContent = "Saved.";
+        toast("Saved");
       } catch (err) {
-        msg.textContent = err.message || "Could not save.";
+        p = before;
+        toast(err.message || "Couldn't save that");
       }
       paint();
-    });
+    };
 
-    const del = root.querySelector("#del-history");
-    const dmsg = root.querySelector("#d-msg");
-    del.addEventListener("click", async () => {
-      if (!window.confirm("Delete your activity history? This cannot be undone.")) return;
-      try {
-        await api.del("/api/me/history");
-        dmsg.textContent = "Your history was deleted.";
-      } catch (err) {
-        dmsg.textContent = err.message || "Could not delete.";
-      }
-    });
+    const bind = () => {
+      root.querySelectorAll("[data-att]").forEach((b) =>
+        b.addEventListener("click", () => b.dataset.att !== p.attendance && save({ ...p, attendance: b.dataset.att })),
+      );
+      root.querySelectorAll(".switch input").forEach((i) =>
+        i.addEventListener("change", () => save({ ...p, [i.name]: i.checked })),
+      );
+      root.querySelector("#del-history").addEventListener("click", () =>
+        openSheet(
+          "Delete your activity?",
+          `<p class="muted">This removes your intents, check-ins, buddy requests and availability. Your account, friends and crews stay. It can't be undone.</p>
+           <div class="sheet-actions"><button type="button" class="btn btn--ghost" data-cancel>Cancel</button>
+           <button type="button" class="btn btn--danger" data-confirm>Delete</button></div>`,
+          (body, close) => {
+            body.querySelector("[data-cancel]").addEventListener("click", close);
+            body.querySelector("[data-confirm]").addEventListener("click", async () => {
+              try {
+                await api.del("/api/me/history");
+                close();
+                toast("Your activity was deleted");
+              } catch (err) {
+                toast(err.message || "Couldn't delete that");
+              }
+            });
+          },
+        ),
+      );
+    };
+
+    paint();
   },
 };

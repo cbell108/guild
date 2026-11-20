@@ -81,15 +81,16 @@ export function dateBadgeHtml(iso) {
 
 /* --- Avatars ------------------------------------------------------------------------- */
 
-/** Round initials avatar, colour derived from the user id. */
-export function avatar(user, cls = "") {
+/** Round initials avatar, colour derived from the user id (`single`: first initial only). */
+export function avatar(user, cls = "", single = false) {
   const hue = hash(String(user.id || user.display_name)) % 360;
-  return `<span class="avatar ${cls}" style="--av-hue:${hue}" aria-hidden="true">${esc(initials(user.display_name))}</span>`;
+  return `<span class="avatar ${cls}" style="--av-hue:${hue}" aria-hidden="true">${esc(single ? initials(user.display_name).slice(0, 1) : initials(user.display_name))}</span>`;
 }
 
 /** Overlapping avatars (max 3) plus an optional "+N" bubble. */
 export function avatarStack(users, extra = 0) {
-  const shown = users.slice(0, 3).map((u) => avatar(u)).join("");
+  // One initial each: overlapping circles would otherwise hide the second letter.
+  const shown = users.slice(0, 3).map((u) => avatar(u, "", true)).join("");
   const more = extra > 0 ? `<span class="avatar avatar--more" aria-hidden="true">+${extra}</span>` : "";
   return `<span class="avatar-stack">${shown}${more}</span>`;
 }
@@ -174,4 +175,27 @@ export function skeleton(kind = "rails") {
   return `<div aria-hidden="true"><div class="skel skel-title"></div><div class="skel-rail">
     ${'<div class="skel skel-card"></div>'.repeat(3)}</div>
     <div class="skel skel-title"></div><div class="skel-rail">${'<div class="skel skel-card skel-card--sm"></div>'.repeat(3)}</div></div>`;
+}
+
+/**
+ * Friendly empty/error state markup: emoji, title, text and an optional action
+ * button (`data-action` — wire it up in the caller).
+ */
+export function stateHtml({ emoji, title, text, action }) {
+  return `<div class="empty" role="status"><span class="empty__emoji" aria-hidden="true">${emoji}</span>
+    <h2>${esc(title)}</h2>${text ? `<p>${esc(text)}</p>` : ""}${
+      action ? `<button type="button" class="btn btn--primary" data-action>${esc(action)}</button>` : ""
+    }</div>`;
+}
+
+/** Error state for a failed request; `err.status === 0` means the network is unreachable. */
+export function errorHtml(err, action = "Try again") {
+  const offline = err && err.status === 0;
+  const missing = err && err.status === 404;
+  return stateHtml({
+    emoji: offline ? "📡" : missing ? "🧭" : "😕",
+    title: offline ? "You're offline" : missing ? "Not found" : "Something went wrong",
+    text: err && err.message ? err.message : "Please try again.",
+    action,
+  });
 }

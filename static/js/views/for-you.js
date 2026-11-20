@@ -15,7 +15,11 @@ function rail(title, cards, { more } = {}) {
     <div class="rail-section__head"><h2 id="${id}">${esc(title)}</h2>${
       more ? `<a class="rail-section__more" href="${esc(more)}">See all</a>` : ""
     }</div>
-    <div class="rail" role="region" aria-label="${esc(title)}" tabindex="0">${cards}</div>
+    <div class="rail-wrap">
+      <button type="button" class="rail-btn rail-btn--prev" data-rail-prev aria-label="Scroll ${esc(title)} left" tabindex="-1"><svg class="icon" aria-hidden="true"><use href="#i-back" /></svg></button>
+      <div class="rail" role="region" aria-label="${esc(title)}" tabindex="0">${cards}</div>
+      <button type="button" class="rail-btn rail-btn--next" data-rail-next aria-label="Scroll ${esc(title)} right" tabindex="-1"><svg class="icon icon--flip" aria-hidden="true"><use href="#i-chevron" /></svg></button>
+    </div>
   </section>`;
 }
 
@@ -89,9 +93,24 @@ export default {
 
     root.innerHTML = `<header class="greeting view-head"><h1>${greeting(me && me.user.display_name)}</h1>
       <p>${me ? "Here's what's on for you." : "Campus events and hangouts, with the people to go with."}</p></header>
-      ${sections.join("") || `<section class="empty"><span class="empty__emoji" aria-hidden="true">🌙</span><h2>Quiet week</h2><p>Nothing coming up yet — host something!</p></section>`}
+      ${sections.join("") || `<section class="empty"><span class="empty__emoji" aria-hidden="true">🌙</span><h2>Quiet week</h2><p>Nothing coming up yet — start something!</p>
+        <a class="btn btn--primary" href="#/host">Host a hangout</a></section>`}
       ${nudge}${end}`;
 
+    // Desktop scroll buttons: page by one viewport of cards; disable at the ends.
+    root.querySelectorAll(".rail-wrap").forEach((wrap) => {
+      const r = wrap.querySelector(".rail");
+      const prev = wrap.querySelector("[data-rail-prev]");
+      const next = wrap.querySelector("[data-rail-next]");
+      const sync = () => {
+        prev.disabled = r.scrollLeft < 8;
+        next.disabled = r.scrollLeft + r.clientWidth >= r.scrollWidth - 8;
+      };
+      prev.addEventListener("click", () => r.scrollBy({ left: -r.clientWidth * 0.9, behavior: "smooth" }));
+      next.addEventListener("click", () => r.scrollBy({ left: r.clientWidth * 0.9, behavior: "smooth" }));
+      r.addEventListener("scroll", sync, { passive: true });
+      sync();
+    });
     root.querySelector("[data-signin]")?.addEventListener("click", () => state.openLogin());
     root.querySelectorAll("[data-why]").forEach((b) =>
       b.addEventListener("click", (e) => {

@@ -175,6 +175,8 @@ h1:focus {
 }
 
 .session__me {
+  text-decoration: none;
+  color: inherit;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -337,7 +339,7 @@ body.no-tabbar #main {
   }
 
   body.no-tabbar #main {
-    padding-bottom: var(--space-12);
+    padding-bottom: calc(var(--safe-bottom) + 10rem); /* clear the floating action bar */
   }
 }
 
@@ -482,7 +484,7 @@ body.no-tabbar #main {
 }
 
 .avatar-stack .avatar {
-  margin-left: -0.5rem;
+  margin-left: -0.375rem;
   box-shadow: 0 0 0 2px var(--color-surface);
 }
 
@@ -851,4 +853,198 @@ body.no-tabbar .toasts {
     opacity: 0;
     transform: translateY(8px);
   }
+}
+
+.session__me:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-full);
+}
+
+/* --- Grouped lists (Me, Crews, Privacy): borderless rows on one soft surface ---------------- */
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.section-head h2 {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-black);
+  letter-spacing: -0.01em;
+}
+
+.group {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-1);
+}
+
+.group > * + * {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-border) 55%, transparent);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 3.75rem;
+  padding: var(--space-2) var(--space-4);
+  color: var(--color-text);
+  text-align: left;
+  text-decoration: none;
+  font-size: var(--text-sm);
+}
+
+a.row:hover,
+button.row:hover {
+  background: var(--color-surface-2);
+}
+
+.row__main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.row__main strong {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.row__main .muted {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-brand-soft);
+  color: var(--color-brand-ink);
+  flex: none;
+}
+
+.row__icon .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.row--danger {
+  color: var(--color-danger);
+}
+
+.row--danger .row__icon {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.btn--danger {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.row .btn {
+  flex: none;
+}
+
+/* Switch (checkbox styled as an iOS-style toggle) */
+.switch {
+  position: relative;
+  flex: none;
+  width: 3rem;
+  height: 1.75rem;
+}
+
+.switch input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.switch__track {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-3);
+  transition: background var(--motion-fast);
+  pointer-events: none;
+}
+
+.switch__track::after {
+  content: "";
+  position: absolute;
+  top: 0.1875rem;
+  left: 0.1875rem;
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: var(--radius-full);
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform var(--motion-fast);
+}
+
+.switch input:checked + .switch__track {
+  background: var(--color-brand);
+}
+
+.switch input:checked + .switch__track::after {
+  transform: translateX(1.25rem);
+}
+
+.switch input:focus-visible + .switch__track {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+/* Two-way segmented control */
+.segmented {
+  display: flex;
+  padding: 0.25rem;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-2);
+}
+
+.segmented button {
+  flex: 1;
+  min-height: 2.5rem;
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.segmented button[aria-pressed="true"] {
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-1);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sheet-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.sheet-actions .btn {
+  flex: 1;
 }

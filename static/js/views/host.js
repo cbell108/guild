@@ -155,10 +155,13 @@ export default {
         }
       } catch (err) {
         details.open = true;
-        nlMsg.textContent =
-          err && err.status === 503
-            ? "The describe-it helper is offline right now — fill in the details below instead."
-            : (err && err.message) || "Couldn't read that — use the details below.";
+        const down = err && err.status === 503;
+        nlMsg.innerHTML = `${
+          down
+            ? "The describe-it helper is offline right now — fill in the details below, or"
+            : esc((err && err.message) || "Couldn't read that — use the details below, or")
+        } <button type="button" class="link-btn link-btn--brand" data-retry>try again</button>.`;
+        nlMsg.querySelector("[data-retry]").addEventListener("click", () => go.click());
       } finally {
         go.disabled = false;
       }
