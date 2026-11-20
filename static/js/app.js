@@ -8,7 +8,7 @@
  */
 import { api, isMock } from "./api.js";
 import { esc } from "./util.js";
-import { avatar, initSheet, openSheet, transition } from "./ui.js";
+import { avatar, errorHtml, initSheet, openSheet, transition } from "./ui.js";
 import feedView from "./views/for-you.js";
 import browseView from "./views/browse.js";
 import crewsView from "./views/crews.js";
@@ -211,13 +211,8 @@ async function renderOnce() {
         document.title = `${h1.textContent} · Campus Hangouts`;
       }
     } catch (err) {
-      root.innerHTML = `
-        <div class="empty">
-          <h2>Something went wrong</h2>
-          <p>${esc(err && err.message ? err.message : "Unknown error")}</p>
-          <button type="button" class="btn btn--soft" data-retry>Try again</button>
-        </div>`;
-      root.querySelector("[data-retry]").addEventListener("click", renderRoute);
+      root.innerHTML = errorHtml(err);
+      root.querySelector("[data-action]").addEventListener("click", renderRoute);
     }
   });
 }

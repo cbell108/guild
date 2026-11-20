@@ -93,7 +93,8 @@ export default {
 
     root.innerHTML = `<header class="greeting view-head"><h1>${greeting(me && me.user.display_name)}</h1>
       <p>${me ? "Here's what's on for you." : "Campus events and hangouts, with the people to go with."}</p></header>
-      ${sections.join("") || `<section class="empty"><span class="empty__emoji" aria-hidden="true">🌙</span><h2>Quiet week</h2><p>Nothing coming up yet — host something!</p></section>`}
+      ${sections.join("") || `<section class="empty"><span class="empty__emoji" aria-hidden="true">🌙</span><h2>Quiet week</h2><p>Nothing coming up yet — start something!</p>
+        <a class="btn btn--primary" href="#/host">Host a hangout</a></section>`}
       ${nudge}${end}`;
 
     // Desktop scroll buttons: page by one viewport of cards; disable at the ends.

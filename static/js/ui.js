@@ -176,3 +176,26 @@ export function skeleton(kind = "rails") {
     ${'<div class="skel skel-card"></div>'.repeat(3)}</div>
     <div class="skel skel-title"></div><div class="skel-rail">${'<div class="skel skel-card skel-card--sm"></div>'.repeat(3)}</div></div>`;
 }
+
+/**
+ * Friendly empty/error state markup: emoji, title, text and an optional action
+ * button (`data-action` — wire it up in the caller).
+ */
+export function stateHtml({ emoji, title, text, action }) {
+  return `<div class="empty" role="status"><span class="empty__emoji" aria-hidden="true">${emoji}</span>
+    <h2>${esc(title)}</h2>${text ? `<p>${esc(text)}</p>` : ""}${
+      action ? `<button type="button" class="btn btn--primary" data-action>${esc(action)}</button>` : ""
+    }</div>`;
+}
+
+/** Error state for a failed request; `err.status === 0` means the network is unreachable. */
+export function errorHtml(err, action = "Try again") {
+  const offline = err && err.status === 0;
+  const missing = err && err.status === 404;
+  return stateHtml({
+    emoji: offline ? "📡" : missing ? "🧭" : "😕",
+    title: offline ? "You're offline" : missing ? "Not found" : "Something went wrong",
+    text: err && err.message ? err.message : "Please try again.",
+    action,
+  });
+}

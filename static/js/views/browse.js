@@ -7,7 +7,7 @@
 import { api } from "../api.js";
 import { esc, localDate, dayOffset, weekendDays, dayHeading } from "../util.js";
 import { eventRow } from "../components.js";
-import { skeleton } from "../ui.js";
+import { skeleton, stateHtml, errorHtml } from "../ui.js";
 
 const PAGE = 20;
 
@@ -80,7 +80,23 @@ export default {
       const rows = all.filter((e) => inRange(e, f.range));
       count.textContent = rows.length ? `${rows.length} event${rows.length === 1 ? "" : "s"}` : "";
       if (!rows.length) {
-        list.innerHTML = `<div class="empty"><span class="empty__emoji" aria-hidden="true">🔍</span><h2>No matches</h2><p>Try a different day or clear a filter.</p></div>`;
+        const filtered = f.q || f.range || f.kind || f.tags.length;
+        list.innerHTML = stateHtml({
+          emoji: "🔍",
+          title: filtered ? "No matches" : "No events yet",
+          text: filtered ? "Try a different day or clear a filter." : "Nothing is scheduled — be the first to host something.",
+          action: filtered ? "Clear filters" : "Host a hangout",
+        });
+        list.querySelector("[data-action]").addEventListener("click", () => {
+          if (!filtered) {
+            window.location.hash = "#/host";
+            return;
+          }
+          Object.assign(f, { q: "", range: "", kind: "", tags: [] });
+          root.querySelector("#f-q").value = "";
+          paintChips();
+          load();
+        });
         return;
       }
       const visible = rows.slice(0, shown);
@@ -126,7 +142,10 @@ export default {
         shown = PAGE;
         paintList();
       } catch (err) {
-        if (mine === seq) list.innerHTML = `<p class="form-error" role="alert">${esc(err.message || "Could not load events.")}</p>`;
+        if (mine === seq) {
+          list.innerHTML = errorHtml(err);
+          list.querySelector("[data-action]").addEventListener("click", load);
+        }
       }
     };
 
