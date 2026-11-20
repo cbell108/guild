@@ -278,7 +278,10 @@ pub fn intent_reply(event_title: &str, level: IntentLevel, waitlisted: bool) -> 
     }
 }
 
-/// `/foryou`: the top picks as numbered lines with their first reason.
+/// Reasons shown per `/foryou` pick.
+pub const FORYOU_REASONS: usize = 2;
+
+/// `/foryou`: the top picks as numbered lines with their top reasons (ephemeral reply).
 pub fn foryou_lines(
     recs: &[Recommendation],
     title_of: impl Fn(EventId) -> Option<(String, DateTime<Utc>)>,
@@ -287,10 +290,17 @@ pub fn foryou_lines(
         .iter()
         .filter_map(|r| {
             let (title, at) = title_of(r.event_id)?;
-            let reason = r
+            let reasons: Vec<&str> = r
                 .reasons
-                .first()
-                .map_or("Coming up soon", |x| x.text.as_str());
+                .iter()
+                .take(FORYOU_REASONS)
+                .map(|x| x.text.as_str())
+                .collect();
+            let reason = if reasons.is_empty() {
+                "Coming up soon".to_owned()
+            } else {
+                reasons.join(" · ")
+            };
             Some(format!(
                 "**{title}** · <t:{}:R>\n  _{reason}_",
                 at.timestamp()
@@ -456,10 +466,20 @@ mod tests {
         let rec = |n| Recommendation {
             event_id: EventId::from_u128(n),
             score: 1.0,
-            reasons: vec![Reason {
-                kind: ReasonKind::Content,
-                text: "Because you like board games".into(),
-            }],
+            reasons: vec![
+                Reason {
+                    kind: ReasonKind::Content,
+                    text: "Because you like board games".into(),
+                },
+                Reason {
+                    kind: ReasonKind::Social,
+                    text: "Carl is going".into(),
+                },
+                Reason {
+                    kind: ReasonKind::Popular,
+                    text: "Popular on campus this week".into(),
+                },
+            ],
             breakdown: ScoreBreakdown::default(),
         };
         let text = foryou_lines(&[rec(1), rec(2)], |id| {
@@ -468,7 +488,7 @@ mod tests {
         assert_eq!(
             text,
             format!(
-                "1. **Tabletop Tuesday** · <t:{}:R>\n  _Because you like board games_",
+                "1. **Tabletop Tuesday** · <t:{}:R>\n  _Because you like board games · Carl is going_",
                 now().timestamp()
             )
         );
