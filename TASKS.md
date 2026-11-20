@@ -33,7 +33,7 @@ Accept for every task: works with `?mock=1` and against the live API; no console
 - [x] B3 MUST Event page: details, Interested / Going / Going with ___ buttons, "looking for a buddy" toggle + match display, add-to-calendar link.
 - [x] B4 MUST Host page: hangout form + "describe it" box that calls `/api/parse` to prefill; crew availability grid.
 - [x] B5 Browse: filter official/hangout, tags, date; text search.
-- [ ] B6 Crews page.
+- [x] B6 Crews page.
 - [ ] B7 "Why am I seeing this?" panel on cards (shows reasons) + privacy settings page.
 - [ ] B8 STRETCH Check-in page (host shows rotating QR; attendee scans).
 - [ ] B9 Polish + accessibility pass; save screenshots to `docs/screenshots/` for the deck.
