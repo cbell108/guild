@@ -139,3 +139,25 @@ With `?mock=1`, the frontend reads `static/mock/<file>` (table above) instead of
 Writes resolve to the same file as the matching read (e.g. `PUT …/intent` → `intent.json`);
 204 endpoints resolve to nothing. Path parameters are ignored (every event id returns
 `event.json`). The mocks share ids, so links between them work.
+
+## Additions after Phase 0
+New endpoints only; nothing above changed. DTOs live in `crates/api`; `static/mock/ask.json` round-trips
+through `AskResponse` (`PUT /api/me/interests` answers with the existing `Me`, mock `me.json`).
+
+| # | Method & path | Auth | Request | Response (2xx) | Mock file |
+|---|---|---|---|---|---|
+| 34 | `PUT /api/me/interests` | 🔒 | `SetInterestsRequest` | `Me` | `me.json` |
+| 35 | `POST /api/ask` | 🔒 | `AskRequest` | `AskResponse` (503 `llm_unavailable` if the LLM is down) | `ask.json` |
+
+**34 Interests.** Replaces the viewer's interest list. Tags are normalized with
+`hangouts_core::normalize_tags` (lowercase, hyphenated, de-duplicated); at most 40, else 400 `bad_request`.
+An empty list is allowed (clears them). The response is the updated `Me`, so the client can refetch
+`/api/feed` immediately — the content recommender uses these tags as the user profile.
+
+**35 Ask.** `llm::interpret_search(text, now, vocabulary)` — a JSON-schema-constrained completion — turns a request
+like "something chill tonight with food" into Browse filters: `when` (`today` | `tomorrow` | `weekend` | `week` | `null`,
+the same windows as Browse's date chips), `kind` (`official` | `hangout` | `null`), `tags` (restricted to the 40 most
+common upcoming tags, i.e. `/api/tags`), a leftover keyword `q`, and a one-line `summary` for the UI pill
+("Showing food events tonight"). Text must be 1–300 characters (else 400). The Browse page falls back to plain text
+search when the answer is 503.
+

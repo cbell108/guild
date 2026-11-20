@@ -85,6 +85,8 @@ const MOCK_ROUTES = [
   ["DELETE", "/api/crews/:id/members/:userId", "crew.json"],
   ["GET", "/api/crews/:id/availability", "crew-availability.json"],
   ["PUT", "/api/me/availability", "availability.json"],
+  ["PUT", "/api/me/interests", "me.json"],
+  ["POST", "/api/ask", "ask.json"],
   ["POST", "/api/parse", "parse.json"],
   ["GET", "/api/me/privacy", "privacy.json"],
   ["PUT", "/api/me/privacy", "privacy.json"],
