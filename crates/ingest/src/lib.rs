@@ -43,9 +43,6 @@ pub enum IngestError {
     /// Database failure.
     #[error(transparent)]
     Store(#[from] StoreError),
-    /// Not built yet.
-    #[error("not implemented yet")]
-    NotImplemented,
 }
 
 /// Ingest settings.
