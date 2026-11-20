@@ -9,18 +9,19 @@ export default {
   name: "privacy",
   async render(root, { state }) {
     const head = `
+      <a class="back-link" href="#/me"><svg class="icon" aria-hidden="true"><use href="#i-back" /></svg> Me</a>
       <header class="view-head">
         <h1>Privacy</h1>
         <p class="lede">You decide what friends can see. There are no public attendee lists or follower counts.</p>
       </header>`;
     if (!state.me) {
-      root.innerHTML = `${head}<section class="empty-state card"><h2>Sign in first</h2>
+      root.innerHTML = `${head}<section class="empty"><h2>Sign in first</h2>
         <p>Use the Sign in button (top right) to pick a demo student.</p></section>`;
       return;
     }
     let p = await api.get("/api/me/privacy");
     root.innerHTML = `${head}
-      <form class="card panel" id="privacy-form">
+      <form class="panel panel--stretch" id="privacy-form">
         <label class="field"><span>Who can see which events I'm going to</span>
           <select name="attendance">
             <option value="friends">My friends</option>
@@ -30,7 +31,7 @@ export default {
         <label class="toggle"><input type="checkbox" name="personalize" /> <span>Personalize my feed from my activity</span></label>
         <p id="p-msg" class="muted" role="status" aria-live="polite"></p>
       </form>
-      <section class="card panel">
+      <section class="panel panel--stretch">
         <h2>Delete my activity</h2>
         <p class="muted">Removes your intents, check-ins, buddy requests and availability. Your account, friends and crews stay.</p>
         <button type="button" class="btn btn--ghost btn--sm" id="del-history">Delete my history</button>

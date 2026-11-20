@@ -1,112 +1,149 @@
 /* ==========================================================================
-   Campus Hangouts — design tokens (Lane B, task B1)
+   Campus Hangouts — design tokens
 
-   Every visual decision in the app should reference a token here, not a raw
-   value, so the whole UI can be re-skinned (or dark-themed) from one file.
-   Tokens are grouped: color, type, spacing, shape, elevation, layout, motion.
-   Components in app.css only use these custom properties.
+   Every visual decision references a token here, never a raw value, so the
+   whole UI re-skins (and dark-themes) from this file. One accent colour
+   (indigo); status colours are used sparingly. Dark mode flips the colour
+   tokens under prefers-color-scheme.
    ========================================================================== */
 
 :root {
-  /* --- Color: surfaces ---------------------------------------------------- */
-  --color-bg: #f4f6fb;            /* page background */
-  --color-surface: #ffffff;       /* cards, header, dialog */
-  --color-surface-2: #edf0f8;     /* inset chips, hovered rows */
-  --color-border: #dfe4ee;        /* hairlines */
-  --color-border-strong: #c5cddd; /* inputs, emphasized hairlines */
+  color-scheme: light dark;
 
-  /* --- Color: text -------------------------------------------------------- */
-  --color-text: #1c2437;          /* primary ink */
-  --color-text-muted: #55617a;    /* secondary ink */
-  --color-text-faint: #8792a8;    /* tertiary ink, placeholders */
-  --color-text-inverse: #ffffff;  /* text on brand fills */
+  /* --- Surfaces -------------------------------------------------------- */
+  --color-bg: #f5f4fa;
+  --color-surface: #ffffff;
+  --color-surface-2: #eeedf6;      /* chips, inset blocks */
+  --color-surface-3: #e4e2f0;      /* pressed / skeleton base */
+  --color-border: #e1dfee;         /* rare hairlines (inputs, dividers) */
+  --color-scrim: rgba(18, 16, 40, 0.5);
 
-  /* --- Color: brand (primary: official events, actions) ------------------- */
+  /* --- Text ------------------------------------------------------------ */
+  --color-text: #17152b;
+  --color-text-muted: #55526e;
+  --color-text-faint: #8a87a3;
+  --color-text-inverse: #ffffff;
+
+  /* --- Accent (single brand colour) -------------------------------------- */
   --color-brand: #4f46e5;
-  --color-brand-deep: #4338ca;    /* hover / active */
-  --color-brand-soft: #eceefe;    /* tinted backgrounds, pills */
-  --color-brand-ink: #3f3cc4;     /* brand text on soft backgrounds */
+  --color-brand-deep: #4036cc;
+  --color-brand-soft: #ebe9fd;
+  --color-brand-ink: #3b33c4;
 
-  /* --- Color: accent (hangouts, warm counterpoint) ------------------------ */
-  --color-accent: #e8721c;
-  --color-accent-deep: #c05a12;
-  --color-accent-soft: #fdeee1;
-  --color-accent-ink: #b0520f;
+  /* --- Status ----------------------------------------------------------- */
+  --color-success: #15803d;
+  --color-success-soft: #dff5e7;
+  --color-success-ink: #116534;
+  --color-warning-soft: #fdecd0;
+  --color-warning-ink: #8a4b07;
+  --color-danger: #c42b2b;
+  --color-danger-soft: #fde6e6;
+  --color-danger-ink: #9a1f1f;
 
-  /* --- Color: status ------------------------------------------------------ */
-  --color-success: #178a50;
-  --color-success-soft: #e3f4ea;
-  --color-success-ink: #146c3f;
-  --color-warning: #a16207;
-  --color-warning-soft: #fbf0d7;
-  --color-warning-ink: #855205;
-  --color-danger: #c03434;
-  --color-danger-soft: #fbe7e7;
-  --color-danger-ink: #9c2626;
+  /* --- Focus ------------------------------------------------------------- */
+  --color-ring: #7a72ff;
 
-  /* --- Color: event kind aliases (used by badges) ------------------------- */
-  --color-kind-official: var(--color-brand);
-  --color-kind-hangout: var(--color-accent);
-  --color-kind-official-soft: var(--color-brand-soft);
-  --color-kind-hangout-soft: var(--color-accent-soft);
-
-  /* --- Color: focus ring --------------------------------------------------- */
-  --color-ring: rgba(79, 70, 229, 0.4);
-
-  /* --- Type ---------------------------------------------------------------- */
+  /* --- Type (system stack only: the demo runs offline) ---------------------- */
   --font-sans:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter",
-    "Helvetica Neue", Arial, sans-serif;
-  --text-2xs: 0.6875rem;  /* 11px — meta lines */
-  --text-xs: 0.75rem;     /* 12px — chips, footer */
-  --text-sm: 0.8125rem;   /* 13px — nav, secondary text */
-  --text-md: 0.9375rem;   /* 15px — body */
-  --text-lg: 1.0625rem;   /* 17px — card titles */
-  --text-xl: 1.3125rem;   /* 21px — view headings */
-  --text-2xl: 1.625rem;   /* 26px — page headings */
-  --leading-tight: 1.25;
-  --leading-normal: 1.55;
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.125rem;
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
   --weight-regular: 400;
   --weight-medium: 500;
   --weight-semibold: 600;
   --weight-bold: 700;
+  --weight-black: 800;
 
-  /* --- Spacing (4px scale) -------------------------------------------------- */
-  --space-1: 0.25rem;  /* 4 */
-  --space-2: 0.5rem;   /* 8 */
-  --space-3: 0.75rem;  /* 12 */
-  --space-4: 1rem;     /* 16 */
-  --space-5: 1.25rem;  /* 20 */
-  --space-6: 1.5rem;   /* 24 */
-  --space-8: 2rem;     /* 32 */
-  --space-10: 2.5rem;  /* 40 */
-  --space-12: 3rem;    /* 48 */
+  /* --- Spacing (4px scale) --------------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
 
-  /* --- Shape ---------------------------------------------------------------- */
-  --radius-xs: 6px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  /* --- Shape ------------------------------------------------------------------ */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
   --radius-full: 999px;
 
-  /* --- Elevation ------------------------------------------------------------- */
-  --shadow-1: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.1);
-  --shadow-2: 0 4px 12px rgba(16, 24, 40, 0.12);
+  /* --- Elevation: soft, layered ------------------------------------------------ */
+  --shadow-1: 0 1px 2px rgba(23, 21, 43, 0.05), 0 2px 8px rgba(23, 21, 43, 0.06);
+  --shadow-2: 0 2px 4px rgba(23, 21, 43, 0.05), 0 8px 24px rgba(23, 21, 43, 0.1);
+  --shadow-3: 0 4px 8px rgba(23, 21, 43, 0.06), 0 16px 40px rgba(23, 21, 43, 0.16);
 
-  /* --- Layout ----------------------------------------------------------------- */
-  --nav-height: 3.5rem;              /* 56px header */
-  --content-max: 67.5rem;            /* 1080px column */
-  --page-pad: clamp(0.75rem, 4vw, 1.5rem);
-  --card-pad: 1rem;                  /* 16px */
+  /* --- Layout ------------------------------------------------------------------- */
+  --topbar-height: 3.5rem;
+  --tabbar-height: 4rem;
+  --content-max: 72rem;
+  --page-pad: 1rem;
+  --tap: 2.75rem; /* 44px minimum target */
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 
-  /* --- Motion ------------------------------------------------------------------- */
+  /* --- Motion --------------------------------------------------------------------- */
   --motion-fast: 120ms ease;
-  --motion: 160ms ease;
+  --motion: 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (min-width: 900px) {
+  :root {
+    --page-pad: 2rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0d0c16;
+    --color-surface: #181725;
+    --color-surface-2: #232234;
+    --color-surface-3: #2d2b42;
+    --color-border: #34324b;
+    --color-scrim: rgba(0, 0, 0, 0.62);
+
+    --color-text: #f1f0fa;
+    --color-text-muted: #b4b1cd;
+    --color-text-faint: #8582a3;
+
+    --color-brand: #7c75ff;
+    --color-brand-deep: #9b95ff;
+    --color-brand-soft: #2a2755;
+    --color-brand-ink: #b9b5ff;
+
+    --color-success: #4ade80;
+    --color-success-soft: #153324;
+    --color-success-ink: #86efac;
+    --color-warning-soft: #3d2a10;
+    --color-warning-ink: #fbbf6a;
+    --color-danger: #f87171;
+    --color-danger-soft: #3d1818;
+    --color-danger-ink: #fca5a5;
+
+    --color-ring: #a39eff;
+
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-2: 0 2px 4px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.4);
+    --shadow-3: 0 4px 8px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.55);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
-    --motion-fast: 0ms ease;
-    --motion: 0ms ease;
+    --motion-fast: 0ms linear;
+    --motion: 0ms linear;
   }
 }
