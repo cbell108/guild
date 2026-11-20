@@ -131,7 +131,7 @@ pub async fn parse_hangout(
         .text()
         .await
         .map_err(|e| LlmError::Unavailable(e.to_string()))?;
-    hangout::parse_response(&body)
+    hangout::parse_response(&body).map(|draft| hangout::refine(draft, text, now))
 }
 
 #[cfg(test)]

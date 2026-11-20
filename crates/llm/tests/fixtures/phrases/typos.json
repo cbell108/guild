@@ -1,0 +1,42 @@
+{
+  "input": "smsh bros tonite 8 to 11 in the studnet center gameroom",
+  "now": "2026-11-19T17:00:00Z",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "content": "{\n  \"capacity\": null,\n  \"date\": \"2026-11-19\",\n  \"description\": \"Let's get together for a Smash Bros session in the Student Center gameroom.\",\n  \"end\": \"23:00\",\n  \"gear_notes\": null,\n  \"location\": \"the studnet center gameroom\",\n  \"start\": \"20:00\",\n  \"tags\": [\n    \"smash-bros\",\n    \"gaming\"\n  ],\n  \"title\": \"Smash Bros Night\"\n}",
+          "role": "assistant"
+        }
+      }
+    ],
+    "created": 1795155318,
+    "id": "chatcmpl-0Hazv24c71MAB0RjeCdOfPwtpfbfm04i",
+    "model": "qwen3.8-27B-UD-Q6_K_M",
+    "object": "chat.completion",
+    "system_fingerprint": "b12110-cd959bae99",
+    "timings": {
+      "cache_n": 508,
+      "draft_n": 117,
+      "draft_n_accepted": 91,
+      "predicted_ms": 2128.329,
+      "predicted_n": 131,
+      "predicted_per_second": 61.08078215351104,
+      "predicted_per_token_ms": 16.37176153846154,
+      "prompt_ms": 243.204,
+      "prompt_n": 31,
+      "prompt_per_second": 127.46500879919738,
+      "prompt_per_token_ms": 7.845290322580645
+    },
+    "usage": {
+      "completion_tokens": 131,
+      "prompt_tokens": 539,
+      "prompt_tokens_details": {
+        "cached_tokens": 508
+      },
+      "total_tokens": 670
+    }
+  }
+}

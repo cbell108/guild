@@ -1,0 +1,42 @@
+{
+  "input": "pickup soccer tmrw at 4 on the campus green",
+  "now": "2026-11-19T17:00:00Z",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "content": "{\n  \"capacity\": null,\n  \"date\": \"2026-11-20\",\n  \"description\": \"Join us for a casual pickup soccer game on the campus green.\",\n  \"end\": null,\n  \"gear_notes\": null,\n  \"location\": \"the campus green\",\n  \"start\": \"16:00\",\n  \"tags\": [\n    \"soccer\",\n    \"pickup\",\n    \"sports\"\n  ],\n  \"title\": \"Pickup Soccer on the Green\"\n}",
+          "role": "assistant"
+        }
+      }
+    ],
+    "created": 1795155306,
+    "id": "chatcmpl-L5KL4KaEH6DJW29QsHA10nd7lufbhCfj",
+    "model": "qwen3.8-27B-UD-Q6_K_M",
+    "object": "chat.completion",
+    "system_fingerprint": "b12110-cd959bae99",
+    "timings": {
+      "cache_n": 508,
+      "draft_n": 105,
+      "draft_n_accepted": 86,
+      "predicted_ms": 1917.074,
+      "predicted_n": 122,
+      "predicted_per_second": 63.11702104352779,
+      "predicted_per_token_ms": 15.843586776859503,
+      "prompt_ms": 5182.252,
+      "prompt_n": 23,
+      "prompt_per_second": 4.438224926151796,
+      "prompt_per_token_ms": 225.3153043478261
+    },
+    "usage": {
+      "completion_tokens": 122,
+      "prompt_tokens": 531,
+      "prompt_tokens_details": {
+        "cached_tokens": 508
+      },
+      "total_tokens": 653
+    }
+  }
+}

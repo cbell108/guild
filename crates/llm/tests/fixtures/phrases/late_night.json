@@ -1,0 +1,42 @@
+{
+  "input": "late night ramen run 11pm",
+  "now": "2026-11-19T17:00:00Z",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "content": "{\n  \"capacity\": null,\n  \"date\": null,\n  \"description\": \"Join me for a late-night ramen run at 11pm.\",\n  \"end\": null,\n  \"gear_notes\": null,\n  \"location\": null,\n  \"start\": \"23:00\",\n  \"tags\": [\n    \"ramen\",\n    \"food\",\n    \"late-night\"\n  ],\n  \"title\": \"Late Night Ramen Run\"\n}",
+          "role": "assistant"
+        }
+      }
+    ],
+    "created": 1795155312,
+    "id": "chatcmpl-uOGCD9RQ80yLJUSmJ4kH60Z2usRZ6c96",
+    "model": "qwen3.8-27B-UD-Q6_K_M",
+    "object": "chat.completion",
+    "system_fingerprint": "b12110-cd959bae99",
+    "timings": {
+      "cache_n": 508,
+      "draft_n": 84,
+      "draft_n_accepted": 81,
+      "predicted_ms": 1556.318,
+      "predicted_n": 110,
+      "predicted_per_second": 70.03710038693892,
+      "predicted_per_token_ms": 14.278146788990826,
+      "prompt_ms": 245.045,
+      "prompt_n": 20,
+      "prompt_per_second": 81.61766206207022,
+      "prompt_per_token_ms": 12.25225
+    },
+    "usage": {
+      "completion_tokens": 110,
+      "prompt_tokens": 528,
+      "prompt_tokens_details": {
+        "cached_tokens": 508
+      },
+      "total_tokens": 638
+    }
+  }
+}

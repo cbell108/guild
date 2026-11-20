@@ -1,0 +1,42 @@
+{
+  "input": "midnight snack run in 2 hours",
+  "now": "2026-11-19T17:00:00Z",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "content": "{\n  \"capacity\": null,\n  \"date\": \"2026-11-19\",\n  \"description\": \"Join me for a late-night snack run!\",\n  \"end\": null,\n  \"gear_notes\": null,\n  \"location\": null,\n  \"start\": \"14:00\",\n  \"tags\": [\n    \"snacks\",\n    \"food\"\n  ],\n  \"title\": \"Midnight Snack Run\"\n}",
+          "role": "assistant"
+        }
+      }
+    ],
+    "created": 1795155308,
+    "id": "chatcmpl-NCvBBkjuuLOxDEnIGKd0ZBqswPwwIVmM",
+    "model": "qwen3.8-27B-UD-Q6_K_M",
+    "object": "chat.completion",
+    "system_fingerprint": "b12110-cd959bae99",
+    "timings": {
+      "cache_n": 508,
+      "draft_n": 87,
+      "draft_n_accepted": 78,
+      "predicted_ms": 1600.89,
+      "predicted_n": 108,
+      "predicted_per_second": 66.83782146181187,
+      "predicted_per_token_ms": 14.96158878504673,
+      "prompt_ms": 233.353,
+      "prompt_n": 20,
+      "prompt_per_second": 85.70706183335975,
+      "prompt_per_token_ms": 11.66765
+    },
+    "usage": {
+      "completion_tokens": 108,
+      "prompt_tokens": 528,
+      "prompt_tokens_details": {
+        "cached_tokens": 508
+      },
+      "total_tokens": 636
+    }
+  }
+}
