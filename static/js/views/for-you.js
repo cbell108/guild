@@ -1,33 +1,42 @@
 /**
- * "For you" view (task B1 shell; the feed itself lands in B2).
+ * "For you" view (B2): the recommender feed as event cards with friend
+ * presence and one reason line each, ending in a "You're caught up" state.
  *
- * View contract: default export `{ name, render(root, { state, params }) }`;
- * `render` replaces `root`'s contents and may be async (it may await API
- * calls). `params` carries route parameters (e.g. `{ id }` on the event view).
+ * View contract: default export `{ name, render(root, { state, params }) }`.
  */
+import { api } from "../api.js";
 import { esc } from "../util.js";
-
-const ICON = `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M12 3l2.1 5.6L20 11l-5.9 2.4L12 19l-2.1-5.6L4 11l5.9-2.4z"/>
-  </svg>`;
+import { eventCard } from "../components.js";
 
 /** Renders the "For you" view. */
 export default {
   name: "feed",
   async render(root, { state }) {
-    const hint = state.me
-      ? "The recommender fills this list from your interests, your friends and what's happening on campus — best picks first, with a reason for each."
-      : "Sign in (top right) and the recommender will fill this list from your interests, your friends and what's happening on campus — best picks first, with a reason for each.";
-    root.innerHTML = `
+    const head = `
       <header class="view-head">
         <h1>For you</h1>
         <p class="lede">Your picks for the next 7 days — matched to your interests, with friends' plans called out.</p>
-      </header>
-      <section class="empty-state card" aria-label="Feed placeholder">
-        <span class="empty-state__icon">${ICON}</span>
-        <h2>Your picks land here</h2>
-        <p>${esc(hint)}</p>
-      </section>`;
+      </header>`;
+    if (!state.me) {
+      root.innerHTML = `${head}
+        <section class="empty-state card">
+          <h2>Sign in to see your picks</h2>
+          <p>Use the Sign in button (top right) to pick a demo student. Meanwhile, <a href="#/browse">browse all events</a>.</p>
+        </section>`;
+      return;
+    }
+    root.innerHTML = `${head}<p class="muted" role="status">Loading your picks…</p>`;
+    const feed = await api.get("/api/feed");
+    const items = feed.items || [];
+    const cards = items.map(eventCard).join("");
+    const end = feed.caught_up
+      ? `<section class="caught-up" aria-label="End of feed">
+           <h2>You're caught up</h2>
+           <p>That's everything for the next 7 days. <a href="#/browse">Browse more</a> or <a href="#/host">host your own</a>.</p>
+         </section>`
+      : "";
+    root.innerHTML = `${head}
+      ${items.length ? `<div class="card-grid">${cards}</div>` : `<p class="muted">${esc("Nothing matched yet.")}</p>`}
+      ${end}`;
   },
 };

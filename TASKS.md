@@ -29,7 +29,7 @@ Your branch has Lane C's crates as placeholders: `recommend::feed` returns upcom
 ## Lane B — frontend (Sonnet) · owns `static/` (not `static/mock/` shapes — those follow docs/API.md)
 Accept for every task: works with `?mock=1` and against the live API; no console errors; mobile width 390 px looks right.
 - [x] B1 MUST Shell + design tokens; nav: For you · Browse · Crews · Host.
-- [ ] B2 MUST For you feed: cards with title, time, place, friend presence ("Jordan + 2 friends going"), one reason line, "You're caught up" end state.
+- [x] B2 MUST For you feed: cards with title, time, place, friend presence ("Jordan + 2 friends going"), one reason line, "You're caught up" end state.
 - [ ] B3 MUST Event page: details, Interested / Going / Going with ___ buttons, "looking for a buddy" toggle + match display, add-to-calendar link.
 - [ ] B4 MUST Host page: hangout form + "describe it" box that calls `/api/parse` to prefill; crew availability grid.
 - [ ] B5 Browse: filter official/hangout, tags, date; text search.
