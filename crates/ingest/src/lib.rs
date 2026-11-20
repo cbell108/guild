@@ -236,20 +236,38 @@ pub async fn run(store: &Store, config: &IngestConfig) -> Result<IngestReport, I
         .user_agent("campus-hangouts-ingest/0.1")
         .build()
         .map_err(|e| IngestError::Http(e.to_string()))?;
-    let now = Utc::now();
+    run_with(store, Utc::now(), |page| {
+        let url = page_url(config, page);
+        let http = http.clone();
+        async move {
+            http.get(&url)
+                .send()
+                .await
+                .and_then(reqwest::Response::error_for_status)
+                .map_err(|e| IngestError::Http(e.to_string()))?
+                .text()
+                .await
+                .map_err(|e| IngestError::Http(e.to_string()))
+        }
+    })
+    .await
+}
+
+/// The paging and upsert loop behind [`run`], with the page fetch injected (`fetch(page)`
+/// returns the raw JSON body of that page). Lets tests feed saved responses without a network.
+pub async fn run_with<F, Fut>(
+    store: &Store,
+    now: DateTime<Utc>,
+    mut fetch: F,
+) -> Result<IngestReport, IngestError>
+where
+    F: FnMut(u32) -> Fut,
+    Fut: std::future::Future<Output = Result<String, IngestError>>,
+{
     let mut report = IngestReport::default();
     let mut page = 1_u32;
     loop {
-        let url = page_url(config, page);
-        let body = http
-            .get(&url)
-            .send()
-            .await
-            .and_then(reqwest::Response::error_for_status)
-            .map_err(|e| IngestError::Http(e.to_string()))?
-            .text()
-            .await
-            .map_err(|e| IngestError::Http(e.to_string()))?;
+        let body = fetch(page).await?;
         let events = map_page(&body, now)?;
         report.fetched += events.len();
         for event in &events {
