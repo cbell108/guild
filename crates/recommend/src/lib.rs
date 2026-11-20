@@ -11,6 +11,7 @@ pub mod content;
 mod embed;
 mod error;
 mod feed;
+pub mod feedback;
 mod model;
 pub mod popular;
 mod similar;
