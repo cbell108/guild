@@ -6,6 +6,8 @@
 //! [`LlmError::NotImplemented`] as "feature unavailable" (HTTP 503), and tests never need a
 //! running server.
 
+pub mod hangout;
+
 use std::time::Duration;
 
 use chrono::{DateTime, Utc};
@@ -15,7 +17,7 @@ use thiserror::Error;
 /// Default server URL.
 pub const DEFAULT_BASE_URL: &str = "http://127.0.0.1:8080/v1";
 /// Default model id.
-pub const DEFAULT_MODEL: &str = "qwen";
+pub const DEFAULT_MODEL: &str = "qwen3.8-27B-UD-Q6_K_M";
 
 /// LLM errors.
 #[derive(Debug, Error)]
@@ -101,13 +103,66 @@ impl LlmClient {
 /// Turns a host's description ("smash tonight 7–10 game room, I have 2 switches") into a
 /// form prefill. `now` resolves relative dates ("tonight", "friday") in campus-local time.
 /// The draft is returned [normalized](HangoutDraft::normalized).
-#[allow(clippy::unused_async)] // stub until implemented; remove this line then
+///
+/// Blank input returns an empty draft without calling the server.
 pub async fn parse_hangout(
     client: &LlmClient,
     text: &str,
     now: DateTime<Utc>,
 ) -> Result<HangoutDraft, LlmError> {
-    // Lane C (C9): JSON-schema-constrained chat completion.
-    let _ = (client, text, now);
-    Err(LlmError::NotImplemented)
+    let text = text.trim();
+    if text.is_empty() {
+        return Ok(HangoutDraft::default());
+    }
+    let url = format!(
+        "{}/chat/completions",
+        client.config.base_url.trim_end_matches('/')
+    );
+    let request = hangout::request(&client.config.model, text, now);
+    let response = client
+        .http
+        .post(url)
+        .json(&request)
+        .send()
+        .await
+        .map_err(|e| LlmError::Unavailable(e.to_string()))?;
+    let status = response.status();
+    if !status.is_success() {
+        return Err(LlmError::Unavailable(format!("server returned {status}")));
+    }
+    let body = response
+        .text()
+        .await
+        .map_err(|e| LlmError::Unavailable(e.to_string()))?;
+    hangout::parse_response(&body)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn client(base_url: &str) -> LlmClient {
+        LlmClient::new(LlmConfig {
+            base_url: base_url.to_owned(),
+            model: "test".to_owned(),
+            timeout: Duration::from_secs(2),
+        })
+        .unwrap()
+    }
+
+    #[tokio::test]
+    async fn blank_input_needs_no_server() {
+        let c = client("http://127.0.0.1:9/v1");
+        let d = parse_hangout(&c, "   ", Utc::now()).await.unwrap();
+        assert_eq!(d, HangoutDraft::default());
+    }
+
+    #[tokio::test]
+    async fn server_down_is_unavailable() {
+        // Port 9 (discard) is closed on any dev machine: the connection is refused fast.
+        let c = client("http://127.0.0.1:9/v1");
+        assert!(!c.health().await);
+        let err = parse_hangout(&c, "smash tonight", Utc::now()).await;
+        assert!(matches!(err, Err(LlmError::Unavailable(_))), "{err:?}");
+    }
 }

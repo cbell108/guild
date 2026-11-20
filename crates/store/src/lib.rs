@@ -13,11 +13,9 @@
 //!
 //! The schema lives in `migrations/` and is applied with [`Store::migrate`].
 
-// Stubs have no await yet; remove once implemented.
-#![allow(clippy::unused_async, clippy::unused_async_trait_impl)]
-
 pub mod buddy;
 pub mod checkins;
+mod codec;
 pub mod crews;
 pub mod error;
 pub mod events;
@@ -97,24 +95,10 @@ mod tests {
     #![allow(clippy::unwrap_used)]
 
     use super::*;
-    use hangouts_core::UserId;
 
     /// An in-memory store migrates cleanly.
     #[tokio::test]
     async fn in_memory_store_migrates() {
         Store::in_memory().await.unwrap().migrate().await.unwrap();
-    }
-
-    /// Stubs report their own name as not implemented.
-    #[tokio::test]
-    async fn stub_reports_not_implemented() {
-        assert!(matches!(
-            Store::in_memory()
-                .await
-                .unwrap()
-                .get_user(UserId::new())
-                .await,
-            Err(StoreError::NotImplemented("get_user"))
-        ));
     }
 }

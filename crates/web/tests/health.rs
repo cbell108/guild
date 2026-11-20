@@ -18,10 +18,7 @@ async fn test_app() -> axum::Router {
         ..llm::LlmConfig::default()
     })
     .unwrap();
-    web::app(web::AppState {
-        store,
-        llm: Arc::new(llm),
-    })
+    web::app(web::AppState::new(store, Arc::new(llm)))
 }
 
 #[tokio::test]
