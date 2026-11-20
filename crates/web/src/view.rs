@@ -61,8 +61,12 @@ pub fn friend_presence(snap: &Snapshot, event: &Event, viewer: Option<UserId>) -
         if friend.privacy.attendance != Visibility::Friends {
             continue;
         }
-        match intent.level {
-            IntentLevel::Interested => interested.push(UserSummary::from(friend)),
+        // A waitlisted friend isn't going yet; count them as interested so cards never
+        // say "going" for someone who holds no spot (and agree with `spots_left`).
+        match (intent.level, intent.status) {
+            (IntentLevel::Interested, _) | (_, IntentStatus::Waitlisted) => {
+                interested.push(UserSummary::from(friend));
+            }
             _ => going.push(UserSummary::from(friend)),
         }
     }

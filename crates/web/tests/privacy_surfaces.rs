@@ -187,3 +187,25 @@ async fn spots_left_is_the_only_count_for_capped_events() {
         (0, 0)
     );
 }
+
+#[tokio::test]
+async fn waitlisted_friend_is_interested_not_going() {
+    let app = TestApp::new().await;
+    let me = app.user(1, "Me").await;
+    let pal = app.user(2, "Pal").await;
+    let early = app.user(3, "Early").await;
+    app.befriend(me, pal).await;
+    let event = app.event(10, "One seat", 3, Some(1)).await;
+    set_intent(&app, early, event, "going").await;
+    set_intent(&app, pal, event, "going").await; // full: pal is waitlisted
+
+    let detail: EventDetail = app
+        .get(&format!("/api/events/{event}"), Some(me))
+        .await
+        .json();
+    assert_eq!(detail.card.spots_left, Some(0));
+    assert_eq!(
+        (detail.card.friends.going, detail.card.friends.interested),
+        (0, 1)
+    );
+}
