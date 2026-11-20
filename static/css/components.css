@@ -1404,3 +1404,83 @@ body.is-onboarding {
   font-weight: var(--weight-semibold);
   cursor: pointer;
 }
+
+/* --- Ask to browse ------------------------------------------------------------------------------ */
+
+.ask {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.25rem 0.25rem 0.25rem var(--space-4);
+  border-radius: var(--radius-full);
+  background: linear-gradient(120deg, var(--color-brand-soft), var(--color-surface));
+  box-shadow: var(--shadow-1);
+}
+
+.ask:focus-within {
+  outline: 3px solid var(--color-ring);
+}
+
+.ask input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--tap);
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  outline: none;
+}
+
+.ask__go {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap);
+  height: var(--tap);
+  border-radius: var(--radius-full);
+  background: var(--color-brand);
+  font-size: 1.125rem;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+  transition: transform var(--motion-fast);
+}
+
+.ask__go:active {
+  transform: scale(0.92);
+}
+
+.ask__go.is-busy span {
+  animation: spin 900ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ask__go.is-busy span {
+    animation: none;
+  }
+}
+
+.ask-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+  padding: 0 0 0 var(--space-4);
+  border-radius: var(--radius-full);
+  background: var(--color-brand-soft);
+  color: var(--color-brand-ink);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.ask-pill button {
+  width: var(--tap);
+  height: var(--tap);
+  border-radius: var(--radius-full);
+  font-size: 1.25rem;
+  line-height: 1;
+}

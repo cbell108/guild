@@ -7,7 +7,7 @@
 import { api } from "../api.js";
 import { esc, localDate, dayOffset, weekendDays, dayHeading } from "../util.js";
 import { eventRow } from "../components.js";
-import { skeleton, stateHtml, errorHtml } from "../ui.js";
+import { skeleton, stateHtml, errorHtml, toast } from "../ui.js";
 
 const PAGE = 20;
 
@@ -37,7 +37,7 @@ function inRange(ev, range) {
 /** Renders the "Browse" view. */
 export default {
   name: "browse",
-  async render(root) {
+  async render(root, { state }) {
     const f = { q: "", range: "", kind: "", tags: [] };
     let shown = PAGE;
     let tagList = [];
@@ -52,6 +52,14 @@ export default {
 
     root.innerHTML = `
       <header class="view-head"><h1>Browse</h1></header>
+      ${
+        state.me
+          ? `<form class="ask" id="ask" role="search"><label class="visually-hidden" for="ask-q">Ask for something</label>
+              <input id="ask-q" type="text" maxlength="300" placeholder="Ask for something… “chill tonight with food”" autocomplete="off" />
+              <button type="submit" class="ask__go" aria-label="Find it"><span aria-hidden="true">✨</span></button></form>
+             <p id="ask-pill" class="ask-pill" role="status" aria-live="polite" hidden></p>`
+          : ""
+      }
       <div class="browse-bar">
         <label class="search"><svg class="icon" aria-hidden="true"><use href="#i-search" /></svg>
           <span class="visually-hidden">Search events</span>
@@ -165,6 +173,49 @@ export default {
       }
       paintChips();
       load();
+    });
+
+    // --- Ask: natural language → filters (falls back to plain text search) -------------------
+    const pill = root.querySelector("#ask-pill");
+    const clearFilters = () => {
+      Object.assign(f, { q: "", range: "", kind: "", tags: [] });
+      root.querySelector("#f-q").value = "";
+      pill.hidden = true;
+      paintChips();
+      load();
+    };
+    root.querySelector("#ask")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const input = root.querySelector("#ask-q");
+      const text = input.value.trim();
+      if (!text) return;
+      const go = root.querySelector(".ask__go");
+      go.disabled = true;
+      go.classList.add("is-busy");
+      try {
+        const res = await api.post("/api/ask", { text });
+        const a = res.filters;
+        Object.assign(f, { range: a.when || "", kind: a.kind || "", tags: a.tags || [], q: a.q || "" });
+        for (const t of f.tags) if (!tagList.some((x) => x.tag === t)) tagList.unshift({ tag: t, count: 0 });
+        root.querySelector("#f-q").value = f.q;
+        pill.innerHTML = `<span>✨ ${esc(res.summary)}</span><button type="button" aria-label="Clear this search" data-clear>×</button>`;
+        pill.hidden = false;
+        pill.querySelector("[data-clear]").addEventListener("click", () => {
+          input.value = "";
+          clearFilters();
+        });
+      } catch {
+        // LLM down (503) or any failure: quietly search the words instead.
+        Object.assign(f, { range: "", kind: "", tags: [], q: text });
+        root.querySelector("#f-q").value = text;
+        pill.hidden = true;
+      } finally {
+        go.disabled = false;
+        go.classList.remove("is-busy");
+      }
+      paintChips();
+      shown = PAGE;
+      await load();
     });
 
     let timer;
