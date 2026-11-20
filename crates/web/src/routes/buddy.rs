@@ -21,6 +21,8 @@ async fn status(state: &AppState, uid: UserId, event: EventId) -> WebResult<Budd
         .iter()
         .any(|b| b.event_id == event && b.user_id == uid);
     let me = snap.user(uid).ok_or_else(WebError::unauthorized)?;
+    // Matching is reciprocal: a user who opted out of being suggested also gets no
+    // suggestions, so nobody can see others while staying invisible themselves.
     if !looking || !me.privacy.buddy_matching {
         return Ok(BuddyStatus {
             looking,
