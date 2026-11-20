@@ -96,6 +96,17 @@ pub fn tag_words(tag: &str) -> String {
     tag.replace('-', " ")
 }
 
+/// Lowercased text with every non-alphanumeric run collapsed to one space, padded with a
+/// space on both sides so `" word "` finds whole words and phrases.
+fn normalized_words(text: &str) -> String {
+    let words: Vec<String> = text
+        .split(|c: char| !c.is_alphanumeric())
+        .filter(|w| !w.is_empty())
+        .map(str::to_lowercase)
+        .collect();
+    format!(" {} ", words.join(" "))
+}
+
 /// The viewer's content profile, built once per feed call.
 pub struct ContentScorer {
     profile: Option<Vec<f32>>,
@@ -169,13 +180,24 @@ impl ContentScorer {
     }
 
     fn reason(&self, event: &Event, vector: &[f32]) -> Reason {
-        let matched: Vec<String> = event
+        let mut matched: Vec<String> = event
             .tags
             .iter()
             .filter(|t| self.interests.contains(t))
             .take(2)
             .map(|t| tag_words(t))
             .collect();
+        if matched.is_empty() {
+            // Imported events rarely carry our tags; fall back to the words they use.
+            let text = normalized_words(&format!("{} {}", event.title, event.description));
+            matched = self
+                .interests
+                .iter()
+                .map(|t| tag_words(t))
+                .filter(|words| text.contains(&format!(" {words} ")))
+                .take(2)
+                .collect();
+        }
         let text = if !matched.is_empty() {
             format!("Because you like {}", matched.join(" and "))
         } else if let Some(title) = self
@@ -222,6 +244,25 @@ mod tests {
         assert!(g.value > h.value + 0.2, "{g:?} vs {h:?}");
         assert_eq!(
             g.reason.unwrap().text,
+            "Because you like board games and tabletop"
+        );
+    }
+
+    #[test]
+    fn reason_falls_back_to_words_in_title_and_description() {
+        let mut snap = fixture();
+        // An imported-style event: no interest tags, but the text names an interest.
+        let games = snap.events.iter_mut().find(|e| e.id == GAME_NIGHT).unwrap();
+        games.tags = vec!["student-life".to_owned()];
+        games.title = "Friday Tabletop Social".to_owned();
+        games.description = "Come play board games with us.".to_owned();
+        let model = crate::AttendanceModel::prior();
+        let embedder = crate::HashEmbedder::default();
+        let ctx = ctx(&snap, ALICE, &model, &embedder);
+        let games = snap.event(GAME_NIGHT).unwrap();
+        let scorer = ContentScorer::new(&ctx, &[games]);
+        assert_eq!(
+            scorer.score(games).reason.unwrap().text,
             "Because you like board games and tabletop"
         );
     }

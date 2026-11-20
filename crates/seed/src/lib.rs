@@ -28,7 +28,9 @@ use rand::{RngExt, SeedableRng};
 use rand_chacha::ChaCha8Rng;
 use store::{Store, StoreError};
 
-use catalog::{CREWS, FIRST_NAMES, LAST_INITIALS, ONE_OFF, PERSONAS, Template, WEEKLY};
+use catalog::{
+    CREWS, EXTRA_INTERESTS, FIRST_NAMES, LAST_INITIALS, ONE_OFF, PERSONAS, Template, WEEKLY,
+};
 
 /// The presenter's demo persona (first user, first on the login screen).
 pub const DEMO_USER: UserId = UserId::from_u128(USER_BASE);
@@ -548,6 +550,16 @@ fn gen_activity(rng: &mut ChaCha8Rng, snap: &mut Snapshot, sims: &[Sim], now: Da
     snap.intents = intents;
     snap.checkins = checkins;
     snap.buddy_requests = buddy;
+}
+
+/// Every interest tag in the app's vocabulary: the personas' tags plus a few extra ones.
+/// Ingest maps KSU calendar categories onto this vocabulary (`ingest::mapped_interests` must stay a subset).
+pub fn interest_vocabulary() -> BTreeSet<&'static str> {
+    PERSONAS
+        .iter()
+        .flat_map(|p| p.tags.iter().copied())
+        .chain(EXTRA_INTERESTS.iter().copied())
+        .collect()
 }
 
 /// Writes a generated snapshot through the store (users, events, friendships, crews,

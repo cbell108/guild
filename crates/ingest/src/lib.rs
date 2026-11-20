@@ -6,6 +6,9 @@
 //! [`run`] does the network paging and the store writes.
 
 mod localist;
+mod vocab;
+
+pub use vocab::{interest_tags, mapped_interests};
 
 use std::collections::BTreeSet;
 
@@ -149,7 +152,15 @@ fn map_instance(raw: &RawEvent, inst: &RawInstance, now: DateTime<Utc>) -> Optio
     if raw.is_online() {
         raw_tags.push("virtual");
     }
-    let mut tags = normalize_tags(&raw_tags);
+    let ksu_tags = normalize_tags(&raw_tags);
+    let department = raw.departments.first().map(|d| d.name.as_str());
+    // Interest-vocabulary tags first, so they survive the cap and lead the card.
+    let mut tags = normalize_tags(&interest_tags(&ksu_tags, department, &title));
+    for tag in ksu_tags {
+        if !tags.contains(&tag) {
+            tags.push(tag);
+        }
+    }
     tags.truncate(MAX_TAGS);
 
     let external = external_id(inst.id);

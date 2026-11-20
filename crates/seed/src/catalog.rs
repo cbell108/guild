@@ -113,6 +113,12 @@ pub(crate) const PERSONAS: &[Persona] = &[
     },
 ];
 
+/// Interests no seeded persona has, but that real users can pick and that ingest maps KSU
+/// categories to (talks, workshops, sports, research, theater). Kept out of the personas so the
+/// seeded world, and therefore `docs/EVAL.md`, does not change.
+pub(crate) const EXTRA_INTERESTS: &[&str] =
+    &["sports", "research", "theater", "talks", "workshops"];
+
 pub(crate) const FIRST_NAMES: &[&str] = &[
     "Jordan", "Maya", "Ethan", "Priya", "Marcus", "Sofia", "Liam", "Aaliyah", "Noah", "Chloe",
     "Diego", "Hannah", "Jamal", "Grace", "Kenji", "Olivia", "Mateo", "Zoe", "Andre", "Lily",

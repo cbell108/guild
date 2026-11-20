@@ -16,3 +16,6 @@ seed.workspace = true
 recommend.workspace = true
 anyhow.workspace = true
 chrono.workspace = true
+store.workspace = true
+tokio.workspace = true
+dotenvy.workspace = true
