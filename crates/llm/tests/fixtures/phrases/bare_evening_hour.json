@@ -1,0 +1,42 @@
+{
+  "input": "saturday 7 mario kart tournament, 8 spots",
+  "now": "2026-11-19T17:00:00Z",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "content": "{\n  \"capacity\": 8,\n  \"date\": \"2026-11-21\",\n  \"description\": \"Join us for a Mario Kart tournament this Saturday at 7 PM.\",\n  \"end\": null,\n  \"gear_notes\": null,\n  \"location\": null,\n  \"start\": \"19:00\",\n  \"tags\": [\n    \"mario-kart\",\n    \"gaming\",\n    \"tournament\"\n  ],\n  \"title\": \"Saturday Mario Kart Tournament\"\n}",
+          "role": "assistant"
+        }
+      }
+    ],
+    "created": 1795155320,
+    "id": "chatcmpl-kziNhVVMC5VSDtnjIKs7VwDX7j37CLdl",
+    "model": "qwen3.8-27B-UD-Q6_K_M",
+    "object": "chat.completion",
+    "system_fingerprint": "b12110-cd959bae99",
+    "timings": {
+      "cache_n": 508,
+      "draft_n": 102,
+      "draft_n_accepted": 88,
+      "predicted_ms": 1885.958,
+      "predicted_n": 122,
+      "predicted_per_second": 64.15837468278721,
+      "predicted_per_token_ms": 15.586429752066117,
+      "prompt_ms": 244.384,
+      "prompt_n": 24,
+      "prompt_per_second": 98.206101872463,
+      "prompt_per_token_ms": 10.182666666666666
+    },
+    "usage": {
+      "completion_tokens": 122,
+      "prompt_tokens": 532,
+      "prompt_tokens_details": {
+        "cached_tokens": 508
+      },
+      "total_tokens": 654
+    }
+  }
+}

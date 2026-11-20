@@ -1,0 +1,42 @@
+{
+  "input": "chill hangout at the rec center",
+  "now": "2026-11-19T17:00:00Z",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "content": "{\n  \"capacity\": null,\n  \"date\": null,\n  \"description\": \"Join us for a chill hangout at the rec center.\",\n  \"end\": null,\n  \"gear_notes\": null,\n  \"location\": \"the rec center\",\n  \"start\": null,\n  \"tags\": [\n    \"hangout\",\n    \"rec-center\"\n  ],\n  \"title\": \"Chill Hangout at the Rec Center\"\n}",
+          "role": "assistant"
+        }
+      }
+    ],
+    "created": 1795155310,
+    "id": "chatcmpl-xMbOHAnsoLtvORAGcajM6j32aGFsCAG0",
+    "model": "qwen3.8-27B-UD-Q6_K_M",
+    "object": "chat.completion",
+    "system_fingerprint": "b12110-cd959bae99",
+    "timings": {
+      "cache_n": 508,
+      "draft_n": 81,
+      "draft_n_accepted": 77,
+      "predicted_ms": 1500.856,
+      "predicted_n": 104,
+      "predicted_per_second": 68.62750323815209,
+      "predicted_per_token_ms": 14.571417475728156,
+      "prompt_ms": 241.586,
+      "prompt_n": 20,
+      "prompt_per_second": 82.78625417035755,
+      "prompt_per_token_ms": 12.0793
+    },
+    "usage": {
+      "completion_tokens": 104,
+      "prompt_tokens": 528,
+      "prompt_tokens_details": {
+        "cached_tokens": 508
+      },
+      "total_tokens": 632
+    }
+  }
+}
