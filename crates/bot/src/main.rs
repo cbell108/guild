@@ -4,6 +4,7 @@
 
 mod commands;
 mod helpers;
+mod service;
 
 use anyhow::Context as _;
 use poise::serenity_prelude as serenity;

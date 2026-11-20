@@ -1,12 +1,9 @@
 //! Slash commands and the button handler. Thin glue: validation and text live in
 //! [`crate::helpers`], data in [`store`], ranking in [`recommend`].
 
-use std::collections::BTreeMap;
-
 use anyhow::Context as _;
 use chrono::Utc;
-use hangouts_core::time::local_date;
-use hangouts_core::{EventId, IntentLevel, IntentStatus, UserId, build_hangout};
+use hangouts_core::{IntentLevel, UserId};
 use poise::CreateReply;
 use poise::serenity_prelude as serenity;
 use recommend::{AttendanceModel, Embedder, FeedConfig, RecContext};
@@ -15,6 +12,7 @@ use store::Store;
 use crate::helpers::{
     self, BUTTON_HERE, BUTTON_INTERESTED, BUTTON_OUT, ButtonAction, HangoutInput,
 };
+use crate::service::{self, HangoutOutcome, Reply};
 
 /// Shared state for every command.
 pub struct Data {
@@ -43,13 +41,15 @@ async fn caller(store: &Store, user: &serenity::User) -> Result<UserId, Error> {
     Ok(u.id)
 }
 
-async fn names(store: &Store) -> Result<BTreeMap<UserId, String>, Error> {
-    Ok(store
-        .list_users()
-        .await?
-        .into_iter()
-        .map(|u| (u.id, u.display_name))
-        .collect())
+async fn send_reply(ctx: Context<'_>, reply: Reply) -> Result<(), Error> {
+    let mut out = CreateReply::default()
+        .content(reply.content)
+        .ephemeral(true);
+    if let Some((title, body)) = reply.embed {
+        out = out.embed(serenity::CreateEmbed::new().title(title).description(body));
+    }
+    ctx.send(out).await?;
+    Ok(())
 }
 
 async fn say_private(ctx: Context<'_>, text: impl Into<String>) -> Result<(), Error> {
@@ -91,34 +91,9 @@ pub async fn availability(
 ) -> Result<(), Error> {
     let store = &ctx.data().store;
     let me = caller(store, ctx.author()).await?;
-    let entry = match helpers::availability_from_input(me, &date, start.as_deref(), end.as_deref())
-    {
-        Ok(a) => a,
-        Err(e) => return say_private(ctx, e.to_string()).await,
-    };
-    store.set_availability(&entry).await?;
-    let day = local_date(entry.window.start());
-    let names = names(store).await?;
-    let others: Vec<(String, _)> = store
-        .list_availability_on(day, None)
-        .await?
-        .into_iter()
-        .map(|a| (names.get(&a.user_id).cloned().unwrap_or_default(), a))
-        .collect();
-    let embed = serenity::CreateEmbed::new()
-        .title(format!(
-            "Availability for {}",
-            hangouts_core::time::format_date(day)
-        ))
-        .description(helpers::availability_lines(&others));
-    ctx.send(
-        CreateReply::default()
-            .content(helpers::availability_confirmation(&entry))
-            .embed(embed)
-            .ephemeral(true),
-    )
-    .await?;
-    Ok(())
+    let reply =
+        service::set_availability(store, me, &date, start.as_deref(), end.as_deref()).await?;
+    send_reply(ctx, reply).await
 }
 
 /// Declare the setup and game you bring to meetups
@@ -130,34 +105,8 @@ pub async fn gear(
 ) -> Result<(), Error> {
     let store = &ctx.data().store;
     let me = caller(store, ctx.author()).await?;
-    let declared = match helpers::gear_from_input(me, &setup, &game) {
-        Ok(g) => g,
-        Err(e) => return say_private(ctx, helpers::gear_error_text(&e)).await,
-    };
-    store.add_gear(&declared).await?;
-    let names = names(store).await?;
-    let all: Vec<(String, _)> = store
-        .list_gear()
-        .await?
-        .into_iter()
-        .map(|g| (names.get(&g.user_id).cloned().unwrap_or_default(), g))
-        .collect();
-    ctx.send(
-        CreateReply::default()
-            .content(format!(
-                "You're now marked with **{}** and **{}**.",
-                declared.setup.as_str(),
-                declared.game
-            ))
-            .embed(
-                serenity::CreateEmbed::new()
-                    .title("Group gear")
-                    .description(helpers::gear_lines(&all)),
-            )
-            .ephemeral(true),
-    )
-    .await?;
-    Ok(())
+    let reply = service::declare_gear(store, me, &setup, &game).await?;
+    send_reply(ctx, reply).await
 }
 
 /// Host a hangout: posts it here, adds a Discord event, and shows it on the web app
@@ -188,11 +137,10 @@ pub async fn hangout(
         tags,
         capacity,
     };
-    let event = match build_hangout(&input.to_spec(), me, EventId::new(), Utc::now()) {
-        Ok(e) => e,
-        Err(e) => return say_private(ctx, e.to_string()).await,
+    let event = match service::create_hangout(&data.store, me, &input, Utc::now()).await? {
+        HangoutOutcome::Created(e) => *e,
+        HangoutOutcome::Rejected(text) => return say_private(ctx, text).await,
     };
-    data.store.insert_event(&event).await?;
 
     // The Discord scheduled event is a nice-to-have: missing permissions must not fail /hangout.
     if let Some(guild) = ctx.guild_id() {
@@ -268,30 +216,10 @@ pub async fn on_component(
     let me = caller(&data.store, &mci.user).await?;
     let now = Utc::now();
     let text = match action {
-        ButtonAction::Presence(p) => {
-            data.store.set_presence(me, p, now).await?;
-            let names = names(&data.store).await?;
-            let roster: Vec<(String, _)> = data
-                .store
-                .list_presence()
-                .await?
-                .into_iter()
-                .map(|r| {
-                    (
-                        names.get(&r.user_id).cloned().unwrap_or_default(),
-                        r.presence,
-                    )
-                })
-                .collect();
-            helpers::presence_reply(p, &roster)
+        ButtonAction::Presence(p) => service::set_presence(&data.store, me, p, now).await?,
+        ButtonAction::Intent { event, level } => {
+            service::record_intent(&data.store, me, event, level, now).await?
         }
-        ButtonAction::Intent { event, level } => match data.store.get_event(event).await? {
-            None => "That hangout no longer exists.".to_owned(),
-            Some(e) => {
-                let intent = data.store.set_intent(me, event, level, now).await?;
-                helpers::intent_reply(&e.title, level, intent.status == IntentStatus::Waitlisted)
-            }
-        },
     };
     mci.create_response(
         ctx,
