@@ -4776,6 +4776,7 @@ dependencies = [
  "http-body-util",
  "llm",
  "recommend",
+ "seed",
  "serde",
  "serde_json",
  "sha2",

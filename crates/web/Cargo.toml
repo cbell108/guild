@@ -36,3 +36,4 @@ uuid.workspace = true
 [dev-dependencies]
 http-body-util.workspace = true
 tower.workspace = true
+seed.workspace = true

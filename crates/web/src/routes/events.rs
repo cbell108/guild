@@ -37,7 +37,7 @@ pub async fn list(
         limit: Some(query.limit.unwrap_or(DEFAULT_LIMIT).clamp(1, MAX_LIMIT)),
     };
     let events = state.store.list_events(&filter).await?;
-    let snap = state.store.load_snapshot().await?;
+    let snap = state.store.load_event_view(&events, viewer).await?;
     Ok(Json(
         events
             .iter()
@@ -61,9 +61,16 @@ pub async fn detail_for(
     id: EventId,
     viewer: Option<hangouts_core::UserId>,
 ) -> WebResult<EventDetail> {
-    let snap = state.store.load_snapshot().await?;
-    let event = snap.event(id).ok_or_else(|| WebError::not_found("Event"))?;
-    Ok(view::detail(&snap, event, viewer))
+    let event = state
+        .store
+        .get_event(id)
+        .await?
+        .ok_or_else(|| WebError::not_found("Event"))?;
+    let snap = state
+        .store
+        .load_event_view(std::slice::from_ref(&event), viewer)
+        .await?;
+    Ok(view::detail(&snap, &event, viewer))
 }
 
 /// `POST /api/events`.

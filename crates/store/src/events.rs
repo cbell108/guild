@@ -25,7 +25,7 @@ pub struct EventFilter {
     pub limit: Option<u32>,
 }
 
-const INSERT_COLUMNS: &str = "id, kind, title, description, tags, location_name, location_room, \
+pub(crate) const INSERT_COLUMNS: &str = "id, kind, title, description, tags, location_name, location_room, \
     location_lat, location_lon, online_url, starts_at, ends_at, capacity, host_id, crew_id, \
     external_id, url, image_url, organizer, created_at";
 
@@ -136,7 +136,8 @@ impl Store {
 
     /// One event by id.
     pub async fn get_event(&self, id: EventId) -> Result<Option<Event>> {
-        let row = sqlx::query("SELECT * FROM events WHERE id = ?")
+        let sql = format!("SELECT {INSERT_COLUMNS} FROM events WHERE id = ?");
+        let row = sqlx::query(sqlx::AssertSqlSafe(sql))
             .bind(id.to_string())
             .fetch_optional(&self.pool)
             .await?;
@@ -145,7 +146,8 @@ impl Store {
 
     /// Events matching `filter`, ordered by `starts_at`.
     pub async fn list_events(&self, filter: &EventFilter) -> Result<Vec<Event>> {
-        let mut sql = String::from("SELECT * FROM events WHERE 1 = 1");
+        // Explicit columns: the embedding BLOB is never needed for display.
+        let mut sql = format!("SELECT {INSERT_COLUMNS} FROM events WHERE 1 = 1");
         if filter.kind.is_some() {
             sql.push_str(" AND kind = ?");
         }
