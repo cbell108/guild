@@ -966,14 +966,105 @@
   line-height: 1.65;
 }
 
+.buddy-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(150deg, var(--color-brand-soft), var(--color-surface));
+  box-shadow: var(--shadow-1);
+}
+
+.buddy-card h2 {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-black);
+}
+
+.buddy-card__box {
+  margin-top: var(--space-2);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+}
+
 .buddy-match {
   display: flex;
   gap: var(--space-3);
   align-items: center;
+  margin: 0 var(--space-3) var(--space-3);
   padding: var(--space-3);
   border-radius: var(--radius-md);
   background: var(--color-success-soft);
+  color: var(--color-success-ink);
+  animation: pop-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+
+.buddy-match p {
+  font-size: var(--text-sm);
+}
+
+.buddy-wait {
+  margin: 0 var(--space-4) var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+}
+
+/* RSVP celebration: the pressed button pops and a few emoji fly out. */
+.actionbar .btn {
+  position: relative;
+}
+
+.pop {
+  animation: pop 420ms cubic-bezier(0.2, 0.9, 0.3, 1.4);
+}
+
+@keyframes pop {
+  40% {
+    transform: scale(1.12);
+  }
+}
+
+.burst {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+}
+
+.burst > span {
+  position: absolute;
+  font-size: 1.1rem;
+  animation: burst 800ms ease-out forwards;
+}
+
+@keyframes burst {
+  from {
+    opacity: 1;
+    transform: rotate(var(--a)) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: rotate(var(--a)) translateY(-3.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pop,
+  .burst > span,
+  .buddy-match {
+    animation: none;
+  }
+}
+
 
 .actionbar {
   position: fixed;
@@ -1208,4 +1299,11 @@
 .slot.is-best {
   outline: 3px solid var(--color-success);
   outline-offset: 1px;
+}
+
+.link-btn--brand {
+  color: var(--color-brand-ink);
+  min-height: 0;
+  padding: 0;
+  text-decoration: underline;
 }
