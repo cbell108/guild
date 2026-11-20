@@ -72,6 +72,7 @@ impl LlmConfig {
 pub struct LlmClient {
     http: reqwest::Client,
     config: LlmConfig,
+    next: std::sync::Arc<std::sync::atomic::AtomicUsize>,
 }
 
 impl LlmClient {
@@ -81,12 +82,34 @@ impl LlmClient {
             .timeout(config.timeout)
             .build()
             .map_err(|e| LlmError::Unavailable(e.to_string()))?;
-        Ok(Self { http, config })
+        Ok(Self {
+            http,
+            config,
+            next: std::sync::Arc::default(),
+        })
     }
 
     /// The settings in use.
     pub fn config(&self) -> &LlmConfig {
         &self.config
+    }
+
+    /// The model id for the next request. `LLM_MODEL` may list several ids separated by
+    /// commas (e.g. one preset per GPU); requests rotate through them round-robin so both
+    /// GPUs serve users.
+    pub fn pick_model(&self) -> &str {
+        let models: Vec<&str> = self
+            .config
+            .model
+            .split(',')
+            .map(str::trim)
+            .filter(|m| !m.is_empty())
+            .collect();
+        if models.is_empty() {
+            return &self.config.model;
+        }
+        let i = self.next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        models[i % models.len()]
     }
 
     /// The underlying HTTP client.
@@ -119,7 +142,7 @@ pub async fn parse_hangout(
         "{}/chat/completions",
         client.config.base_url.trim_end_matches('/')
     );
-    let request = hangout::request(&client.config.model, text, now);
+    let request = hangout::request(client.pick_model(), text, now);
     let response = client
         .http
         .post(url)
@@ -155,7 +178,7 @@ pub async fn interpret_search(
         "{}/chat/completions",
         client.config.base_url.trim_end_matches('/')
     );
-    let request = search::request(&client.config.model, text, now, known_tags);
+    let request = search::request(client.pick_model(), text, now, known_tags);
     let response = client
         .http
         .post(url)
@@ -185,6 +208,18 @@ mod tests {
             timeout: Duration::from_secs(2),
         })
         .unwrap()
+    }
+
+    #[test]
+    fn several_models_rotate_round_robin() {
+        let c = LlmClient::new(LlmConfig {
+            model: "a:5080, b:9070XT".to_owned(),
+            ..LlmConfig::default()
+        })
+        .unwrap();
+        let picks: Vec<&str> = (0..4).map(|_| c.pick_model()).collect();
+        assert_eq!(picks, ["a:5080", "b:9070XT", "a:5080", "b:9070XT"]);
+        assert_eq!(client("http://x/v1").pick_model(), "test");
     }
 
     #[tokio::test]
