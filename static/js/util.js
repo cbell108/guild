@@ -120,3 +120,46 @@ export function localHM(iso) {
 export function todayLocal() {
   return dayKey(new Date());
 }
+
+/* --- Calendar helpers used by the carousels, Browse filters and badges ---------- */
+
+/** Campus-local weekday of an instant: 0 = Sunday … 6 = Saturday. */
+export function localWeekday(iso) {
+  const name = new Intl.DateTimeFormat("en-US", { timeZone: TZ, weekday: "short" }).format(new Date(iso));
+  return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(name);
+}
+
+/** Campus-local date `n` days from today, `YYYY-MM-DD`. */
+export function dayOffset(n) {
+  return shiftedDayKey(new Date().toISOString(), n);
+}
+
+/** Dates (local) of the coming weekend: today counts when it is Sat/Sun. */
+export function weekendDays() {
+  const today = localWeekday(new Date().toISOString());
+  const toSat = today === 0 ? -1 : 6 - today; // Sunday: Saturday was yesterday
+  const sat = today === 0 ? null : dayOffset(toSat);
+  const sun = today === 0 ? dayOffset(0) : dayOffset(toSat + 1);
+  return [sat, sun].filter(Boolean);
+}
+
+/** Badge parts for a cover: `{ dow: "SAT", day: "21" }` in campus time. */
+export function dateBadge(iso) {
+  const d = new Date(iso);
+  return {
+    dow: new Intl.DateTimeFormat("en-US", { timeZone: TZ, weekday: "short" }).format(d).toUpperCase(),
+    day: new Intl.DateTimeFormat("en-US", { timeZone: TZ, day: "numeric" }).format(d),
+  };
+}
+
+/** Long day heading: "Saturday, November 21" (with Today/Tomorrow prefixes). */
+export function dayHeading(iso) {
+  const long = new Intl.DateTimeFormat("en-US", {
+    timeZone: TZ,
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  }).format(new Date(iso));
+  const label = dayLabel(iso);
+  return label === "Today" || label === "Tomorrow" ? `${label} · ${long}` : long;
+}
