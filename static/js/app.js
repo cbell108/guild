@@ -143,6 +143,13 @@ async function renderRoute() {
   const view = VIEWS[name];
   try {
     await view.render(root, { state, params });
+    // Accessibility: move focus to the new view's heading and update the title.
+    const h1 = root.querySelector("h1");
+    if (h1) {
+      h1.setAttribute("tabindex", "-1");
+      h1.focus({ preventScroll: true });
+      document.title = `${h1.textContent} · Campus Hangouts`;
+    }
   } catch (err) {
     root.innerHTML = `
       <div class="error-panel" role="alert">

@@ -466,3 +466,7 @@ form.panel {
   font-size: var(--text-sm);
   word-break: break-all;
 }
+
+h1:focus {
+  outline: none;
+}
