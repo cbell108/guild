@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Campus Hangouts · KSU</title>
+    <meta
+      name="description"
+      content="Find campus events, student hangouts and the people to go with — Kennesaw State."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Cpath d='M16 6l2.5 7.5L26 16l-7.5 2.5L16 26l-2.5-7.5L6 16l7.5-2.5z' fill='white'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/components.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="app-header">
+      <div class="app-header__inner">
+        <a class="brand" href="#/" aria-label="Campus Hangouts home">
+          <svg class="brand__logo" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="9" />
+            <path d="M16 6l2.5 7.5L26 16l-7.5 2.5L16 26l-2.5-7.5L6 16l7.5-2.5z" />
+          </svg>
+          <span class="brand__word">Campus Hangouts</span>
+        </a>
+
+        <nav class="app-nav" aria-label="Primary">
+          <a class="nav-link" href="#/" data-nav="feed">For you</a>
+          <a class="nav-link" href="#/browse" data-nav="browse">Browse</a>
+          <a class="nav-link" href="#/crews" data-nav="crews">Crews</a>
+          <a class="nav-link nav-link--host" href="#/host" data-nav="host">Host</a>
+        </nav>
+
+        <div class="session" id="session"></div>
+      </div>
+    </header>
+
+    <main id="main">
+      <div id="view" class="view"></div>
+    </main>
+
+    <footer class="app-footer">
+      <span>Campus Hangouts · KSU AI Club Hackathon 2026</span>
+      <span class="mock-pill" id="mode-pill" hidden>Mock data</span>
+    </footer>
+
+    <dialog id="login-dialog" class="login-dialog" aria-labelledby="login-title">
+      <h2 id="login-title">Sign in (demo)</h2>
+      <p class="dialog-sub">Pick a demo student to explore as.</p>
+      <div id="login-users" class="user-list"></div>
+    </dialog>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
