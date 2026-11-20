@@ -555,12 +555,7 @@ pub async fn write(store: &Store, snapshot: &Snapshot) -> Result<(), StoreError>
     for user in &snapshot.users {
         store.insert_user(user).await?;
     }
-    for event in &snapshot.events {
-        store.insert_event(event).await?;
-    }
-    for (id, embedding) in &snapshot.event_embeddings {
-        store.set_event_embedding(*id, embedding).await?;
-    }
+    // Crews before events: crew hangouts reference crews(id).
     for crew in &snapshot.crews {
         store.insert_crew(crew).await?;
     }
@@ -568,6 +563,12 @@ pub async fn write(store: &Store, snapshot: &Snapshot) -> Result<(), StoreError>
         store
             .add_crew_member(m.crew_id, m.user_id, m.role, m.joined_at)
             .await?;
+    }
+    for event in &snapshot.events {
+        store.insert_event(event).await?;
+    }
+    for (id, embedding) in &snapshot.event_embeddings {
+        store.set_event_embedding(*id, embedding).await?;
     }
     for f in &snapshot.friendships {
         store

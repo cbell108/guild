@@ -17,7 +17,7 @@ use thiserror::Error;
 /// Default server URL.
 pub const DEFAULT_BASE_URL: &str = "http://127.0.0.1:8080/v1";
 /// Default model id.
-pub const DEFAULT_MODEL: &str = "qwen";
+pub const DEFAULT_MODEL: &str = "qwen3.8-27B-UD-Q6_K_M";
 
 /// LLM errors.
 #[derive(Debug, Error)]
