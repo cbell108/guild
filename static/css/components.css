@@ -1507,3 +1507,44 @@ body.is-onboarding {
   font-size: 1.25rem;
   line-height: 1;
 }
+
+/* ---------- Who's going + time matrix ---------- */
+.crowd-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-1);
+}
+.crowd-card[hidden] { display: none; }
+.crowd-card h2 { font-size: var(--text-lg); font-weight: var(--weight-black); }
+
+.matrix__scroll { overflow-x: auto; margin: 0 calc(var(--space-2) * -1); padding: 0 var(--space-2); }
+.matrix { border-collapse: separate; border-spacing: 3px; min-width: 100%; font-size: var(--text-sm); }
+.matrix th, .matrix td { text-align: center; font-weight: var(--weight-medium); }
+.matrix thead th { color: var(--color-text-muted); font-size: 0.75rem; min-width: 2rem; padding-bottom: 2px; }
+.matrix thead th.is-event { color: var(--color-text); font-weight: var(--weight-black); }
+.matrix td { height: 2rem; min-width: 2rem; border-radius: 8px; background: var(--color-surface-2); }
+.matrix td.is-free { background: var(--color-success-soft); box-shadow: inset 0 0 0 1px var(--color-success); }
+.matrix__who { text-align: left !important; white-space: nowrap; padding-right: var(--space-3); }
+.matrix__who > span { display: inline-flex; flex-direction: column; vertical-align: middle; margin-left: var(--space-2); line-height: 1.2; }
+.matrix__who small { color: var(--color-text-muted); font-weight: var(--weight-medium); }
+.matrix__who .avatar { vertical-align: middle; }
+.matrix__total th { color: var(--color-text-muted); text-align: left; }
+.matrix__total td { background: transparent; color: var(--color-text-muted); font-weight: var(--weight-black); }
+.matrix__total td.is-best { background: var(--color-success); color: var(--color-on-success, #fff); }
+.matrix__best { font-weight: var(--weight-black); color: var(--color-success-ink); }
+
+.range { margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--color-surface-3); }
+.range__row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: flex-end; margin-top: var(--space-2); }
+.range__row .field { flex: 1 1 7rem; }
+.range__tip { margin-top: var(--space-2); }
+.matrix__who { position: sticky; left: 0; background: var(--color-surface); z-index: 1; }
+@media (max-width: 520px) {
+  .matrix__who .avatar { display: none; }
+  .matrix__who > span { margin-left: 0; }
+  .matrix td, .matrix thead th { min-width: 1.7rem; }
+  .matrix { border-spacing: 2px; }
+}

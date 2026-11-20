@@ -9,8 +9,8 @@ use std::path::PathBuf;
 
 use api::{
     ApiError, AskResponse, AvailabilityView, BuddyStatus, CheckInResponse, CrewAvailability,
-    CrewDetail, CrewSummary, EventCard, EventDetail, FeedResponse, FriendsResponse, HangoutDraft,
-    HealthResponse, Me, MyIntent, QrToken, TagCount, UserSummary,
+    CrewDetail, CrewSummary, EventCard, EventCrowd, EventDetail, FeedResponse, FriendsResponse,
+    HangoutDraft, HealthResponse, Me, MyIntent, QrToken, TagCount, UserSummary,
 };
 use hangouts_core::PrivacySettings;
 use serde::{Serialize, de::DeserializeOwned};
@@ -51,6 +51,7 @@ macro_rules! mocks {
 mocks! {
     health: "health.json" => HealthResponse,
     ask: "ask.json" => AskResponse,
+    crowd: "event-crowd.json" => EventCrowd,
     demo_users: "demo-users.json" => Vec<UserSummary>,
     me: "me.json" => Me,
     events: "events.json" => Vec<EventCard>,

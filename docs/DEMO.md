@@ -24,9 +24,12 @@ It takes a few seconds; if the LLM is down it falls back to plain search.
 ## 1:10 — Event page: Going with + buddy match (35 s)
 1. Open **Smash Saturdays** (a card with friends going).
 2. In the bottom action bar tap **With…** and pick a friend chip.
-3. Under **🤝 Don't want to go alone?** turn on **Looking for a buddy**. The match appears: a friend
+3. Scroll to **🕹️ Match times**: you and your friends who are going, with an hour-by-hour grid.
+   Set **From / Until** and **Save my times**; the bottom row and "Best time" update.
+   Only you and friends who share attendance appear, never a public list.
+4. Under **🤝 Don't want to go alone?** turn on **Looking for a buddy**. The match appears: a friend
    first (Jasmine L. on Smash Saturdays), otherwise a similar student you don't know yet.
-4. The calendar icon at the top of the photo downloads an `.ics`.
+5. The calendar icon at the top of the photo downloads an `.ics`.
 
 ## 1:45 — Host: describe it, then check people in (40 s)
 1. Tap **Host** (the + in the bottom nav).
@@ -61,6 +64,7 @@ Taken with the seeded demo user at 390 px wide (phone) unless noted.
 | `crew-availability-grid-mobile.jpg` | Crew best-time grid for tomorrow |
 | `privacy-settings-mobile.jpg` | Privacy settings and Delete my history |
 | `browse-mobile.jpg` | Browse with search, type, day and tag filters |
+| `match-times-mobile.jpg` | Smash event: who is going (you + friends) and the hour-by-hour time matrix |
 | `ask-browse-mobile.jpg` | Ask for something: natural language turned into Browse filters |
 | `onboarding-mobile.jpg` | First sign-in interest picker |
 | `checkin-qr-mobile.jpg` | Host check-in page with the rotating QR code |

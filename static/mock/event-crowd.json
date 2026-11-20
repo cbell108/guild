@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-20",
+  "people": [
+    {
+      "user": { "id": "00000000-0000-4000-8000-000000000101", "display_name": "Connor B.", "bio": "CS junior, Smash and board games" },
+      "level": "going",
+      "is_me": true,
+      "free_from": "2026-11-20T23:00:00Z",
+      "free_until": "2026-11-21T03:00:00Z"
+    },
+    {
+      "user": { "id": "00000000-0000-4000-8000-000000000102", "display_name": "Jasmine L.", "bio": "Smash main" },
+      "level": "going",
+      "is_me": false,
+      "free_from": "2026-11-21T00:00:00Z",
+      "free_until": "2026-11-21T02:00:00Z"
+    },
+    {
+      "user": { "id": "00000000-0000-4000-8000-000000000103", "display_name": "Marcus T.", "bio": "Fighting games" },
+      "level": "interested",
+      "is_me": false,
+      "free_from": null,
+      "free_until": null
+    }
+  ]
+}

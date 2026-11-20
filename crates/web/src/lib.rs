@@ -17,8 +17,8 @@ pub mod view;
 pub use state::{AppState, Clock};
 
 use routes::{
-    ask, auth as auth_routes, buddy, calendar, checkin, crews, events, feed, friends, intents,
-    interests, parse, privacy,
+    ask, auth as auth_routes, buddy, calendar, checkin, crews, crowd, events, feed, friends,
+    intents, interests, parse, privacy,
 };
 
 /// The full router.
@@ -42,6 +42,7 @@ pub fn app(state: AppState) -> Router {
             get(buddy::get).post(buddy::toggle),
         )
         .route("/api/events/{id}/qr", get(checkin::qr))
+        .route("/api/events/{id}/crowd", get(crowd::get))
         .route("/api/checkin", post(checkin::checkin))
         .route("/api/me/privacy", get(privacy::get).put(privacy::put))
         .route("/api/me/history", delete(privacy::delete_history))

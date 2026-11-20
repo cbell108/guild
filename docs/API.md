@@ -161,3 +161,13 @@ common upcoming tags, i.e. `/api/tags`), a leftover keyword `q`, and a one-line 
 ("Showing food events tonight"). Text must be 1–300 characters (else 400). The Browse page falls back to plain text
 search when the answer is 503.
 
+
+### 36 `GET /api/events/{id}/crowd` 🔒 → `EventCrowd`
+
+Who is going, for the event page's "Match times" card. Lists **the viewer and their accepted
+friends who share attendance with friends** and are Going / Going with / Interested (a
+waitlisted friend counts as interested). The viewer comes first, then Going before Interested.
+There is no public attendee list and no total, so strangers never appear. Each `CrowdPerson`
+carries `free_from` / `free_until`, the window that person set with `PUT /api/me/availability`
+for the event's campus-local `date` (`null` when they haven't shared one). Unknown event → 404.
+Mock: `event-crowd.json`.

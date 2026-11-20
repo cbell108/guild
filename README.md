@@ -13,6 +13,7 @@ going, and matches you with someone to go with. A Discord bot is one integration
 - **Buddy matching**: first a friend who's going, then a similar student you don't know yet.
 - **Friend presence**: friends see friends only — never public attendee lists.
 - **Anyone can host a hangout**, including natural-language hosting through a local LLM ("plan a Friday night movie at my place").
+- **Who's going + match times**: on any event you see yourself and the friends who share their plans, with an hour-by-hour grid of when everyone can attend (game nights like Smash get a "Match times" view). You set the range of hours you can make it.
 - **Crews** with a shared availability grid to find a time that works for everyone.
 - **Privacy controlled by students**: attendance is private by default, and students decide what to share.
 

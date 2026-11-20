@@ -6,6 +6,7 @@ pub mod buddy;
 pub mod calendar;
 pub mod checkin;
 pub mod crews;
+pub mod crowd;
 pub mod events;
 pub mod feed;
 pub mod friends;

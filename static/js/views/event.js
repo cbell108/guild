@@ -6,6 +6,7 @@
 import { api } from "../api.js";
 import { esc, fmtEventTime } from "../util.js";
 import { cover, dateBadgeHtml, avatar, avatarStack, openSheet, toast, reducedMotion, errorHtml, stateHtml } from "../ui.js";
+import { mountCrowd } from "../crowd.js";
 import { kindChip, placeLine, friendLine, intentLabel, spotsText } from "../components.js";
 
 /** Icon + text row. */
@@ -110,6 +111,7 @@ export default {
           <p class="chips">${(ev.tags || []).map((t) => `<span class="chip">#${esc(t)}</span>`).join("")}</p>
           ${ev.url ? `<p><a href="${esc(ev.url)}" target="_blank" rel="noopener noreferrer">View on the KSU calendar ↗</a></p>` : ""}
           ${isHost ? `<p><a class="btn btn--ghost" href="#/checkin/${esc(ev.id)}">Open check-in</a></p>` : ""}
+          ${me ? `<section class="crowd-card" id="crowd" aria-live="polite" hidden></section>` : ""}
           ${
             me
               ? `<section class="buddy-card" aria-labelledby="buddy-h">
@@ -157,6 +159,8 @@ export default {
     root.querySelector("[data-signin]")?.addEventListener("click", () => state.openLogin());
     if (!me) return;
 
+    mountCrowd(root.querySelector("#crowd"), ev, me);
+
     const status = root.querySelector("#intent-status");
     const cant = root.querySelector("#cant");
     const buttons = [...root.querySelectorAll("[data-level]")];
@@ -180,6 +184,7 @@ export default {
         my = await api.put(`/api/events/${id}/intent`, { level, with: withUser ? withUser.id : null });
         paint();
         toast(my.status === "waitlisted" ? "You're on the waitlist" : level === "interested" ? "Marked interested" : "You're going 🎉");
+        mountCrowd(root.querySelector("#crowd"), ev, me);
         if (my.status !== "waitlisted") celebrate(root.querySelector(`[data-level="${level}"]`));
       } catch (err) {
         my = before;

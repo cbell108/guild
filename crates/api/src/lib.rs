@@ -575,6 +575,31 @@ pub struct AskResponse {
     pub summary: String,
 }
 
+/// One person in an event's "who's going" list.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct CrowdPerson {
+    /// The person (the viewer or one of their friends who shares attendance).
+    pub user: UserSummary,
+    /// Their intent level.
+    pub level: IntentKind,
+    /// Whether this is the viewer.
+    pub is_me: bool,
+    /// Start of the time range they can attend on the event's day, if they shared one.
+    pub free_from: Option<DateTime<Utc>>,
+    /// End of that range.
+    pub free_until: Option<DateTime<Utc>>,
+}
+
+/// `GET /api/events/{id}/crowd`: the viewer and their friends who are going or interested,
+/// with the time ranges they can attend on the event's campus-local day.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct EventCrowd {
+    /// The event's campus-local date, `YYYY-MM-DD` (set ranges for this date).
+    pub date: String,
+    /// The viewer first, then friends (Going before Interested).
+    pub people: Vec<CrowdPerson>,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

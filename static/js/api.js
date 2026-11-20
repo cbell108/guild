@@ -69,6 +69,7 @@ const MOCK_ROUTES = [
   ["PUT", "/api/events/:id/intent", "intent.json"],
   ["DELETE", "/api/events/:id/intent", null],
   ["GET", "/api/feed", "feed.json"],
+  ["GET", "/api/events/:id/crowd", "event-crowd.json"],
   ["GET", "/api/events/:id/buddy", "buddy.json"],
   ["POST", "/api/events/:id/buddy", "buddy.json"],
   ["GET", "/api/events/:id/qr", "qr.json"],
