@@ -1,15 +1,15 @@
 /**
  * Check-in view (B8).
  *
- * Host mode (`#/checkin/<event id>`): shows the rotating check-in link
- * (refreshes every 20 s; tokens last ~60 s) with a copy button.
+ * Host mode (`#/checkin/<event id>`): shows the rotating check-in QR code and
+ * link (refreshes every 20 s; tokens last ~60 s) with a copy button.
  * Attendee mode (`/checkin?event=…&token=…`, the link the host shares):
  * posts the token to `/api/checkin` and confirms.
- * NOTE: the link is shown as text/copy — no QR image is drawn, because the
- * frontend ships no dependencies and has no QR encoder yet.
+ * The QR image is drawn by the dependency-free encoder in `../qr.js`.
  */
 import { api } from "../api.js";
 import { esc, fmtEventTime } from "../util.js";
+import { qrSvg } from "../qr.js";
 
 /** Renders the check-in view. */
 export default {
@@ -43,8 +43,9 @@ export default {
     root.innerHTML = `
       <p><a class="back-link" href="#/event/${esc(id)}">← Back</a></p>
       <header class="view-head"><h1>Check-in · ${esc(ev.title)}</h1>
-        <p class="lede">Share this link with attendees as they arrive. It refreshes every 20 seconds.</p></header>
-      <section class="panel panel--stretch">
+        <p class="lede">Attendees scan this with their phone camera as they arrive. It refreshes every 20 seconds, so a screenshot won't work later.</p></header>
+      <section class="panel panel--stretch ci-panel">
+        <div id="ci-qr" class="ci-qr"></div>
         <p id="ci-msg" class="muted" role="status" aria-live="polite">Loading…</p>
         <code id="ci-link" class="ci-link"></code>
         <button type="button" class="btn btn--ghost btn--sm" id="ci-copy">Copy link</button>
@@ -58,7 +59,8 @@ export default {
         const qr = await api.get(`/api/events/${encodeURIComponent(id)}/qr`);
         url = new URL(qr.checkin_url, window.location.origin).href;
         link.textContent = url;
-        msg.textContent = "Live check-in link:";
+        root.querySelector("#ci-qr").innerHTML = qrSvg(url, `Check-in code for ${ev.title}`);
+        msg.textContent = "Or share the live link:";
       } catch (err) {
         msg.textContent = err.status === 403 ? "Only the host can open check-in." : err.message;
         return;

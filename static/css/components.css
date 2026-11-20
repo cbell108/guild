@@ -707,6 +707,29 @@
   word-break: break-all;
 }
 
+.ci-panel {
+  align-items: center;
+  text-align: center;
+}
+
+/* Always dark-on-white with its own quiet zone (inside the SVG), so phones scan it in dark mode. */
+.ci-qr {
+  width: min(100%, 18rem);
+  aspect-ratio: 1;
+  margin-inline: auto;
+}
+
+.ci-qr:empty {
+  display: none;
+}
+
+.ci-qr svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-sm);
+}
+
 /* --- Browse -------------------------------------------------------------------------------------- */
 
 .browse-bar {
