@@ -94,3 +94,25 @@ export function fmtEventTime(startsIso, endsIso) {
 function isoOf(date) {
   return date.toISOString();
 }
+
+/** Campus-local `YYYY-MM-DD` of an RFC 3339 instant (zero-padded). */
+export function localDate(iso) {
+  return dayKey(new Date(iso));
+}
+
+/** Campus-local `HH:MM` (24 h) of an RFC 3339 instant. */
+export function localHM(iso) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: TZ,
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date(iso));
+  const get = (type) => parts.find((p) => p.type === type)?.value || "00";
+  return `${get("hour")}:${get("minute")}`;
+}
+
+/** Today's campus-local date, `YYYY-MM-DD`. */
+export function todayLocal() {
+  return dayKey(new Date());
+}
