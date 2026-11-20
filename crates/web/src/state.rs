@@ -30,11 +30,30 @@ pub struct AppState {
     pub clock: Clock,
 }
 
+/// The `.env.example` placeholder, treated like an unset `QR_SECRET`.
+const QR_SECRET_PLACEHOLDER: &str = "change-me-to-a-random-string";
+
+fn qr_secret_from_env() -> String {
+    match std::env::var("QR_SECRET") {
+        Ok(s) if !s.trim().is_empty() && s != QR_SECRET_PLACEHOLDER => s,
+        _ => {
+            tracing::warn!("QR_SECRET is not set; using a random key for this process");
+            format!(
+                "{}{}",
+                uuid::Uuid::new_v4().simple(),
+                uuid::Uuid::new_v4().simple()
+            )
+        }
+    }
+}
+
 impl AppState {
     /// State with production defaults: default embedder, prior attendance model, system clock,
-    /// `static/` directory and the `QR_SECRET` env var (a fixed dev fallback if unset).
+    /// `static/` directory and the `QR_SECRET` env var. Without `QR_SECRET` (or with the
+    /// `.env.example` placeholder) a random per-process key is used, so check-in tokens can't
+    /// be forged from a value published in the repo; they then stop working on restart.
     pub fn new(store: Store, llm: Arc<LlmClient>) -> Self {
-        let secret = std::env::var("QR_SECRET").unwrap_or_else(|_| "dev-only-qr-secret".to_owned());
+        let secret = qr_secret_from_env();
         Self {
             store,
             llm,
