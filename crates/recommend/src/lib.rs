@@ -6,16 +6,27 @@
 //! [`Embedder`], [`HashEmbedder`], [`default_embedder`], [`event_text`], [`RecommendError`].
 //! Lane C may add modules and pub items but must not change those signatures.
 
+pub mod collab;
+pub mod content;
 mod embed;
 mod error;
 mod feed;
+pub mod feedback;
 mod model;
+pub mod popular;
 mod similar;
+pub mod social;
+#[cfg(test)]
+mod test_support;
 
-pub use embed::{Embedder, HashEmbedder, default_embedder, event_text};
+#[cfg(feature = "fastembed")]
+pub use embed::FastEmbedder;
+pub use embed::{Embedder, HashEmbedder, cosine, default_embedder, event_text, mean_normalized};
 pub use error::RecommendError;
 pub use feed::{FeedConfig, Weights, feed};
-pub use model::{AttendanceFeatures, AttendanceModel};
+pub use model::{
+    AttendanceFeatures, AttendanceModel, friends_going, past_show_rate, training_samples,
+};
 pub use similar::{UserMatch, similar_users};
 
 use chrono::{DateTime, Utc};
