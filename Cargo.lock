@@ -1057,9 +1057,12 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "chrono",
+ "dotenvy",
  "hangouts-core",
  "recommend",
  "seed",
+ "store",
+ "tokio",
 ]
 
 [[package]]
@@ -1838,6 +1841,7 @@ dependencies = [
  "dotenvy",
  "hangouts-core",
  "reqwest 0.13.5",
+ "seed",
  "serde",
  "serde_json",
  "store",
