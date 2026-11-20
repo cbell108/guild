@@ -21,7 +21,7 @@ Your branch has Lane C's crates as placeholders: `recommend::feed` returns upcom
 - [x] A6 MUST `GET /api/feed` → `recommend::feed` over `store.load_snapshot()`, top 10 for the next 7 days + `caught_up: true` at the end; friend presence counts (friends only). Hold `recommend::default_embedder()` and `AttendanceModel::train(..)` in `AppState`; backfill `events_missing_embedding()` at startup and embed new hangouts on create.
 - [x] A7 MUST Buddy match: `POST /api/events/:id/buddy` (toggle looking), `GET /api/events/:id/buddy` → friend first, else `recommend::similar_users` among others looking.
 - [x] A8 MUST Serve `static/` at `/`; `GET /api/events/{id}/calendar.ics`.
-- [ ] A9 Friends + crews endpoints.
+- [x] A9 Friends + crews endpoints.
 - [ ] A10 `POST /api/parse` → `llm::parse_hangout`; 503 with a friendly message if the LLM is down.
 - [ ] A11 STRETCH Check-in: rotating HMAC QR token (60 s window) `GET /api/events/:id/qr`, `POST /api/checkin`.
 - [ ] A12 STRETCH Privacy settings endpoints (visibility toggles, delete history).

@@ -3,7 +3,7 @@
 //! [`app`] builds the router from an [`AppState`], so integration tests in `tests/` drive it
 //! with `tower::ServiceExt::oneshot` and no network.
 
-use axum::routing::{any, get, post, put};
+use axum::routing::{any, delete, get, post, put};
 use axum::{Json, Router, extract::State};
 use tower_http::services::{ServeDir, ServeFile};
 
@@ -16,7 +16,7 @@ pub mod view;
 
 pub use state::{AppState, Clock};
 
-use routes::{auth as auth_routes, buddy, calendar, events, feed, intents};
+use routes::{auth as auth_routes, buddy, calendar, crews, events, feed, friends, intents};
 
 /// The full router.
 pub fn app(state: AppState) -> Router {
@@ -39,6 +39,18 @@ pub fn app(state: AppState) -> Router {
             get(buddy::get).post(buddy::toggle),
         )
         .route("/api/feed", get(feed::feed))
+        .route("/api/friends", get(friends::list).post(friends::request))
+        .route("/api/friends/{user_id}/accept", post(friends::accept))
+        .route("/api/friends/{user_id}", delete(friends::remove))
+        .route("/api/crews", get(crews::list).post(crews::create))
+        .route("/api/crews/{id}", get(crews::get))
+        .route("/api/crews/{id}/members", post(crews::add_member))
+        .route(
+            "/api/crews/{id}/members/{user_id}",
+            delete(crews::remove_member),
+        )
+        .route("/api/crews/{id}/availability", get(crews::availability))
+        .route("/api/me/availability", put(crews::set_availability))
         .route("/api/tags", get(events::tags))
         .route("/api/{*rest}", any(api_not_found))
         .fallback_service(

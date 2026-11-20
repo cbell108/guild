@@ -3,8 +3,10 @@
 pub mod auth;
 pub mod buddy;
 pub mod calendar;
+pub mod crews;
 pub mod events;
 pub mod feed;
+pub mod friends;
 pub mod intents;
 
 use hangouts_core::EventId;
