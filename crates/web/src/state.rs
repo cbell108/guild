@@ -46,6 +46,17 @@ impl AppState {
         }
     }
 
+    /// Retrains the attendance model on the current database contents.
+    pub async fn retrain_model(&self) -> Result<(), store::StoreError> {
+        let snapshot = self.store.load_snapshot().await?;
+        let trained = AttendanceModel::train(&snapshot, self.now());
+        *self
+            .model
+            .write()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = trained;
+        Ok(())
+    }
+
     /// The current time.
     pub fn now(&self) -> DateTime<Utc> {
         (self.clock)()

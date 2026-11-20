@@ -19,6 +19,10 @@ async fn main() -> anyhow::Result<()> {
     let state = web::AppState::new(store, Arc::new(llm));
     let embedded = web::embedding::backfill(&state).await;
     tracing::info!("embedded {embedded} events");
+    state
+        .retrain_model()
+        .await
+        .context("train attendance model")?;
     let app = web::app(state);
 
     let listener = tokio::net::TcpListener::bind(&bind)

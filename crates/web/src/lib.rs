@@ -3,8 +3,9 @@
 //! [`app`] builds the router from an [`AppState`], so integration tests in `tests/` drive it
 //! with `tower::ServiceExt::oneshot` and no network.
 
-use axum::routing::{get, post, put};
+use axum::routing::{any, get, post, put};
 use axum::{Json, Router, extract::State};
+use tower_http::services::{ServeDir, ServeFile};
 
 pub mod auth;
 pub mod embedding;
@@ -15,7 +16,7 @@ pub mod view;
 
 pub use state::{AppState, Clock};
 
-use routes::{auth as auth_routes, events, intents};
+use routes::{auth as auth_routes, buddy, calendar, events, feed, intents};
 
 /// The full router.
 pub fn app(state: AppState) -> Router {
@@ -32,7 +33,18 @@ pub fn app(state: AppState) -> Router {
             "/api/events/{id}/intent",
             put(intents::set).delete(intents::remove),
         )
+        .route("/api/events/{id}/calendar.ics", get(calendar::ics))
+        .route(
+            "/api/events/{id}/buddy",
+            get(buddy::get).post(buddy::toggle),
+        )
+        .route("/api/feed", get(feed::feed))
         .route("/api/tags", get(events::tags))
+        .route("/api/{*rest}", any(api_not_found))
+        .fallback_service(
+            ServeDir::new(&state.static_dir)
+                .fallback(ServeFile::new(state.static_dir.join("index.html"))),
+        )
         .with_state(state)
 }
 
@@ -41,4 +53,9 @@ async fn health(State(state): State<AppState>) -> Json<api::HealthResponse> {
         ok: true,
         llm: state.llm.health().await,
     })
+}
+
+/// Unknown `/api` paths get the JSON error body instead of the frontend's `index.html`.
+async fn api_not_found() -> error::WebError {
+    error::WebError::not_found("Endpoint")
 }

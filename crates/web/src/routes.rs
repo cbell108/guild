@@ -1,7 +1,10 @@
 //! Route handlers, grouped by area.
 
 pub mod auth;
+pub mod buddy;
+pub mod calendar;
 pub mod events;
+pub mod feed;
 pub mod intents;
 
 use hangouts_core::EventId;
