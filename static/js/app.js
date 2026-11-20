@@ -12,6 +12,7 @@ import browseView from "./views/browse.js";
 import crewsView from "./views/crews.js";
 import hostView from "./views/host.js";
 import eventView from "./views/event.js";
+import privacyView from "./views/privacy.js";
 
 /** View registry, keyed by route name. */
 const VIEWS = {
@@ -20,6 +21,7 @@ const VIEWS = {
   crews: crewsView,
   host: hostView,
   event: eventView,
+  privacy: privacyView,
 };
 
 /**
@@ -88,10 +90,10 @@ function renderHeader() {
   }
   const me = state.me.user;
   session.innerHTML = `
-    <span class="user-chip" title="${esc(me.display_name)}">
+    <a class="user-chip" href="#/privacy" title="Privacy settings" aria-label="${esc(me.display_name)} — privacy settings">
       <span class="avatar" aria-hidden="true">${esc(initials(me.display_name))}</span>
       <span class="user-chip__name">${esc(me.display_name)}</span>
-    </span>
+    </a>
     <button type="button" class="icon-button" id="sign-out-btn" aria-label="Sign out" title="Sign out">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>

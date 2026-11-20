@@ -85,10 +85,20 @@ export function eventCard(item) {
   const mine = intentLabel(ev.my_intent);
   const spots = spotsText(ev);
   const tags = (ev.tags || []).slice(0, 4).map((t) => `<span class="chip">#${esc(t)}</span>`).join("");
-  const why = reasons.length > 1
+  const bd = item.breakdown;
+  const bars = bd
+    ? `<div class="why__bars" aria-label="Score breakdown">${["content", "collaborative", "social", "popular"]
+        .filter((k) => bd[k] > 0)
+        .map(
+          (k) =>
+            `<span class="why__bar"><span>${k}</span><span class="why__track"><span class="why__fill" style="width:${Math.min(100, Math.round(bd[k] * 250))}%"></span></span></span>`,
+        )
+        .join("")}</div>`
+    : "";
+  const why = reasons.length
     ? `<details class="why"><summary>Why am I seeing this?</summary><ul>${reasons
         .map((r) => `<li><span class="why__kind">${esc(r.kind)}</span> ${esc(r.text)}</li>`)
-        .join("")}</ul></details>`
+        .join("")}</ul>${bars}</details>`
     : "";
   return `
     <article class="event-card card">
