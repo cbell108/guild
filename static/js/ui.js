@@ -81,15 +81,16 @@ export function dateBadgeHtml(iso) {
 
 /* --- Avatars ------------------------------------------------------------------------- */
 
-/** Round initials avatar, colour derived from the user id. */
-export function avatar(user, cls = "") {
+/** Round initials avatar, colour derived from the user id (`single`: first initial only). */
+export function avatar(user, cls = "", single = false) {
   const hue = hash(String(user.id || user.display_name)) % 360;
-  return `<span class="avatar ${cls}" style="--av-hue:${hue}" aria-hidden="true">${esc(initials(user.display_name))}</span>`;
+  return `<span class="avatar ${cls}" style="--av-hue:${hue}" aria-hidden="true">${esc(single ? initials(user.display_name).slice(0, 1) : initials(user.display_name))}</span>`;
 }
 
 /** Overlapping avatars (max 3) plus an optional "+N" bubble. */
 export function avatarStack(users, extra = 0) {
-  const shown = users.slice(0, 3).map((u) => avatar(u)).join("");
+  // One initial each: overlapping circles would otherwise hide the second letter.
+  const shown = users.slice(0, 3).map((u) => avatar(u, "", true)).join("");
   const more = extra > 0 ? `<span class="avatar avatar--more" aria-hidden="true">+${extra}</span>` : "";
   return `<span class="avatar-stack">${shown}${more}</span>`;
 }
