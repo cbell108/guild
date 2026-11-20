@@ -1,5 +1,6 @@
 //! Route handlers, grouped by area.
 
+pub mod ask;
 pub mod auth;
 pub mod buddy;
 pub mod calendar;
@@ -9,6 +10,7 @@ pub mod events;
 pub mod feed;
 pub mod friends;
 pub mod intents;
+pub mod interests;
 pub mod parse;
 pub mod privacy;
 

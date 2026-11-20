@@ -8,6 +8,7 @@
  */
 import { api, isMock } from "./api.js";
 import { esc } from "./util.js";
+import { showOnboarding } from "./interests.js";
 import { avatar, errorHtml, initSheet, openSheet, transition } from "./ui.js";
 import feedView from "./views/for-you.js";
 import browseView from "./views/browse.js";
@@ -247,12 +248,38 @@ async function openLogin() {
             close();
             renderHeader();
             renderRoute();
+            maybeOnboard();
           } catch (err) {
             body.insertAdjacentHTML("afterbegin", `<p class="form-error" role="alert">${esc(err.message || "Sign-in failed")}</p>`);
           }
         }),
       ),
   );
+}
+
+/**
+ * First sign-in with fewer than 3 interests: the full-screen "What are you into?" step.
+ * Skipping lasts for the browser session. Saving refreshes the feed (the recommender adapts).
+ */
+async function maybeOnboard() {
+  const me = state.me;
+  if (!me || me.interests.length >= 3) return;
+  try {
+    if (sessionStorage.getItem("campus-hangouts.skip-onboarding") === me.user.id) return;
+  } catch {
+    /* storage blocked: just show it */
+  }
+  const updated = await showOnboarding(me);
+  if (updated) {
+    state.me = updated;
+    renderRoute();
+  } else {
+    try {
+      sessionStorage.setItem("campus-hangouts.skip-onboarding", me.user.id);
+    } catch {
+      /* ignore */
+    }
+  }
 }
 
 /** Boots the shell: mode pill, session, listeners, first render. */
@@ -268,6 +295,7 @@ async function boot() {
   renderHeader();
   window.addEventListener("hashchange", renderRoute);
   await renderRoute();
+  maybeOnboard();
 }
 
 boot();

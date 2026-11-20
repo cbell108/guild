@@ -1,0 +1,11 @@
+{
+  "filters": {
+    "when": "today",
+    "kind": null,
+    "tags": [
+      "food"
+    ],
+    "q": null
+  },
+  "summary": "Showing food events tonight"
+}

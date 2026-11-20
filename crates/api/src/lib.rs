@@ -523,6 +523,58 @@ pub struct CheckInResponse {
     pub at: DateTime<Utc>,
 }
 
+// --- Additions after Phase 0 -----------------------------------------------------------------
+
+/// `PUT /api/me/interests` body: the viewer's full interest list (replaces the old one).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SetInterestsRequest {
+    /// Interest tags; normalized server-side (lowercase, de-duplicated).
+    pub interests: Vec<String>,
+}
+
+/// `POST /api/ask` body.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct AskRequest {
+    /// e.g. "something chill tonight with food".
+    pub text: String,
+}
+
+/// The date window an "ask" resolved to (matches Browse's date chips).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SearchWhen {
+    /// Today (campus-local).
+    Today,
+    /// Tomorrow.
+    Tomorrow,
+    /// The coming weekend.
+    Weekend,
+    /// The next 7 days.
+    Week,
+}
+
+/// Browse filters derived from an "ask". Every field is always present (`null` / `[]` when unused).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SearchFilters {
+    /// Date chip to apply.
+    pub when: Option<SearchWhen>,
+    /// Official events or hangouts only.
+    pub kind: Option<EventKind>,
+    /// Tags (a subset of the known tag vocabulary).
+    pub tags: Vec<String>,
+    /// Free-text query.
+    pub q: Option<String>,
+}
+
+/// `POST /api/ask` response.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct AskResponse {
+    /// Filters to apply to Browse's chips and search box.
+    pub filters: SearchFilters,
+    /// Pill text, e.g. "Showing food events tonight".
+    pub summary: String,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
