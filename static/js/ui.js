@@ -57,14 +57,16 @@ function category(ev) {
  */
 export function cover(ev, inner = "") {
   const c = category(ev);
-  const h = hash(String(ev.id || ev.title));
+  // Unsigned math (`>>> 0`, `>>>`): the hash is a signed 32-bit int; a negative one made the pattern index
+  // negative (class "cover--undefined") and pushed the emoji off-canvas.
+  const h = hash(String(ev.id || ev.title)) >>> 0;
   const shift = (h % 21) - 10;
   const angle = 120 + (h % 5) * 18;
-  const pattern = ["dots", "lines", "rings"][(h >> 3) % 3];
+  const pattern = ["dots", "lines", "rings"][(h >>> 3) % 3];
   const style =
     `--cv-a:hsl(${(c.a + shift + 360) % 360} 72% 52%);` +
     `--cv-b:hsl(${(c.b - shift + 360) % 360} 78% 38%);--cv-angle:${angle}deg;` +
-    `--cv-x:${(h >> 5) % 2 ? 62 : 6}%;--cv-y:${8 + ((h >> 7) % 30)}%;--cv-rot:${((h >> 9) % 41) - 20}deg`;
+    `--cv-x:${(h >>> 5) % 2 ? 62 : 6}%;--cv-y:${8 + ((h >>> 7) % 30)}%;--cv-rot:${((h >>> 9) % 41) - 20}deg`;
   const img = ev.image_url
     ? `<img class="cover__img" src="${esc(ev.image_url)}" alt="" loading="lazy" onerror="this.remove()" />`
     : "";
