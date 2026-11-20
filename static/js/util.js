@@ -19,10 +19,14 @@ export function esc(value) {
   })[c]);
 }
 
-/** "Priya S." → "PS". */
+/** "Priya S." → "PS"; "Casey (demo)" → "C" (words not starting with a letter/digit are skipped). */
 export function initials(name) {
-  const parts = String(name || "").trim().split(/\s+/).slice(0, 2);
-  return parts.map((p) => p[0] || "").join("").toUpperCase() || "?";
+  const words = String(name || "")
+    .trim()
+    .split(/\s+/)
+    .filter((w) => /^[\p{L}\p{N}]/u.test(w))
+    .slice(0, 2);
+  return words.map((w) => w[0]).join("").toUpperCase() || "?";
 }
 
 /* --- Date/time formatting ------------------------------------------------------ */

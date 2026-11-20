@@ -67,12 +67,42 @@ function parseHash() {
   return { name: "feed", params: {}, known: false };
 }
 
+/**
+ * Per-browser hint that a session cookie probably exists. The `uid` cookie is HTTP-only,
+ * so without this every signed-out page load would ask `/api/me` and log a 401. The server
+ * stays the authority: a stale hint just costs one 401, which clears it.
+ */
+const SESSION_HINT = "campus-hangouts.signed-in";
+
+function setSessionHint(on) {
+  try {
+    if (on) localStorage.setItem(SESSION_HINT, "1");
+    else localStorage.removeItem(SESSION_HINT);
+  } catch {
+    /* storage blocked (private mode): fall back to always asking */
+  }
+}
+
+function hasSessionHint() {
+  try {
+    return localStorage.getItem(SESSION_HINT) === "1";
+  } catch {
+    return true;
+  }
+}
+
 /** Loads the session; a 401 (or an API that isn't up yet) means logged out. */
 async function loadSession() {
+  if (!isMock() && !hasSessionHint()) {
+    state.me = null;
+    return;
+  }
   try {
     state.me = await api.get("/api/me");
+    setSessionHint(true);
   } catch {
     state.me = null;
+    setSessionHint(false);
   }
 }
 
@@ -84,6 +114,7 @@ async function logout() {
     /* server may be down; local state still resets */
   }
   state.me = null;
+  setSessionHint(false);
   renderHeader();
   renderRoute();
 }
@@ -206,6 +237,7 @@ async function loginAs(userId) {
   const list = document.getElementById("login-users");
   try {
     state.me = await api.post("/api/login", { user_id: userId });
+    setSessionHint(true);
   } catch (err) {
     if (list) {
       list.innerHTML = `
