@@ -191,12 +191,20 @@ impl Store {
     }
 
     /// Tags used by upcoming events with usage counts, most common first.
+    /// "Upcoming" is judged by the system clock; see [`Store::list_tags_from`].
     pub async fn list_tags(&self) -> Result<Vec<(String, u32)>> {
+        self.list_tags_from(Utc::now()).await
+    }
+
+    /// Tags used by events that haven't ended by `from`, with usage counts, most common first.
+    /// Callers with their own clock (the web app, tests) pass it here so results don't depend
+    /// on the wall-clock date.
+    pub async fn list_tags_from(&self, from: DateTime<Utc>) -> Result<Vec<(String, u32)>> {
         let rows = sqlx::query(
             "SELECT j.value AS tag, COUNT(*) AS n FROM events e, json_each(e.tags) j \
              WHERE e.ends_at > ? GROUP BY j.value ORDER BY n DESC, tag",
         )
-        .bind(ts(Utc::now()))
+        .bind(ts(from))
         .fetch_all(&self.pool)
         .await?;
         rows.iter()
