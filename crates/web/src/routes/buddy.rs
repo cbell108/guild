@@ -13,7 +13,7 @@ use crate::state::AppState;
 
 /// Computes the viewer's buddy status on an event.
 async fn status(state: &AppState, uid: UserId, event: EventId) -> WebResult<BuddyStatus> {
-    let snap = state.store.load_snapshot().await?;
+    let snap = state.store.load_buddy_view(event, uid).await?;
     snap.event(event)
         .ok_or_else(|| WebError::not_found("Event"))?;
     let looking = snap
