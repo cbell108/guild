@@ -87,13 +87,13 @@ $(tail -60 "$wt/.gate.out")"
 
   if (( ok )); then
     sed -i "0,/^- \[ \] $id /s//- [x] $id /" TASKS.md
-    git add -A -- . ':!.takeover.log' ':!.gate.out' ':!.takeover-stop'
+    git add -A  # .takeover.log, .gate.out and .takeover-stop are gitignored; naming them here makes git add exit 1 under set -e
     SKIP_HOOKS=1 git commit -q -m "feat(lane-$(tr 'A-Z' 'a-z' <<<"$lane")): $id via local model" \
       -m "Implemented by the local model (scripts/local-takeover.sh); needs review." \
       && say "committed $id" || say "commit of $id failed (hook?)"
     done_count=$((done_count + 1))
   else
-    git stash push -u -q -m "takeover-failed-$id" -- . ':!.takeover.log' ':!.gate.out' || true
+    git stash push -u -q -m "takeover-failed-$id" || true
     awk -v lane="$lane" -v entry="- **$id** local model failed twice; changes in \`git stash list\` (takeover-failed-$id). Last gate output: \`.gate.out\`." '
       { print }
       /^## Lane / && $3 == lane { print ""; print entry }' BLOCKED.md >BLOCKED.md.tmp && mv BLOCKED.md.tmp BLOCKED.md
