@@ -44,7 +44,7 @@ Your branch has Lane A's `store` as stubs (`StoreError::NotImplemented`). Test p
 - [x] C2 MUST `seed`: deterministic (fixed RNG seed) 60 demo users with personas/interest tags, ~10 crews, friendships, 4 weeks of intent + check-in history with realistic no-shows; includes the user's own demo persona.
 - [x] C3 MUST Content scorer: fastembed embeddings of title+description+tags; user profile = mean of interest tags + attended events; cosine.
 - [x] C4 MUST Social scorer: friend boost + attendance probability (logistic regression on intent level, days ahead, friends going, past show rate; trained on seed history; prior fallback).
-- [ ] C5 MUST Hybrid `feed()`: weighted sum, configurable weights, reasons from top contributing component(s) in plain English. Tests assert reasons.
+- [x] C5 MUST Hybrid `feed()`: weighted sum, configurable weights, reasons from top contributing component(s) in plain English. Tests assert reasons.
 - [ ] C6 MUST `similar_users()` for buddy matching (interest + co-attendance similarity).
 - [ ] C7 MUST Collaborative scorer: item-item over implicit feedback (check-in 3, going 2, interested 1).
 - [ ] C8 MUST Offline eval binary (`crates/eval`, on `seed::generate()`): hold out last week, precision@5 + recall@10 for hybrid vs popularity baseline vs content-only; write table to `docs/EVAL.md` (pitch slide).

@@ -6,11 +6,13 @@
 //! [`Embedder`], [`HashEmbedder`], [`default_embedder`], [`event_text`], [`RecommendError`].
 //! Lane C may add modules and pub items but must not change those signatures.
 
+pub mod collab;
 pub mod content;
 mod embed;
 mod error;
 mod feed;
 mod model;
+pub mod popular;
 mod similar;
 pub mod social;
 #[cfg(test)]
