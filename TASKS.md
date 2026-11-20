@@ -49,5 +49,5 @@ Your branch has Lane A's `store` as stubs (`StoreError::NotImplemented`). Test p
 - [x] C7 MUST Collaborative scorer: item-item over implicit feedback (check-in 3, going 2, interested 1).
 - [x] C8 MUST Offline eval binary (`crates/eval`, on `seed::generate()`): hold out last week, precision@5 + recall@10 for hybrid vs popularity baseline vs content-only; write table to `docs/EVAL.md` (pitch slide).
 - [x] C9 `llm::parse_hangout` via JSON-schema-constrained chat completion; unit-test the prompt/parse with a recorded response.
-- [ ] C10 `bot`: port `/game`, `/availability`, `/gear` from the prototype to poise; `/hangout` creates an Event + Discord Scheduled Event; buttons write intents. Test pure helpers; no token needed overnight.
+- [x] C10 `bot`: port `/game`, `/availability`, `/gear` from the prototype to poise; `/hangout` creates an Event + Discord Scheduled Event; buttons write intents. Test pure helpers; no token needed overnight.
 - [ ] C11 STRETCH `bot` `/foryou` → ephemeral top 3 with reasons.
