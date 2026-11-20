@@ -98,7 +98,7 @@ pub async fn create(
 
 /// `GET /api/tags`.
 pub async fn tags(State(state): State<AppState>) -> WebResult<Json<Vec<TagCount>>> {
-    let tags = state.store.list_tags().await?;
+    let tags = state.store.list_tags_from(state.now()).await?;
     Ok(Json(
         tags.into_iter()
             .take(30)

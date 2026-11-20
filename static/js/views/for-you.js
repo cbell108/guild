@@ -4,7 +4,7 @@
  * interests). Sections are de-duplicated and hidden when empty.
  */
 import { api } from "../api.js";
-import { esc, localDate, dayOffset, weekendDays } from "../util.js";
+import { esc, localDate, localHM, dayOffset, weekendDays } from "../util.js";
 import { eventCard, whyHtml } from "../components.js";
 import { openSheet, skeleton } from "../ui.js";
 
@@ -64,7 +64,9 @@ export default {
       sections.push(rail(me ? "Top picks for you" : "Coming up", tops.map((e) => card(e, "hero")).join("")));
     }
     const tonight = take(upcoming.filter((e) => localDate(e.starts_at) === today));
-    if (tonight.length) sections.push(rail("Tonight", tonight.map((e) => card(e)).join("")));
+    // Campus-local hour decides the label: a 9 AM visit shows "Today", not "Tonight".
+    const todayLabel = localHM(new Date().toISOString()) >= "17:00" ? "Tonight" : "Today";
+    if (tonight.length) sections.push(rail(todayLabel, tonight.map((e) => card(e)).join("")));
     const wk = take(upcoming.filter((e) => weekend.includes(localDate(e.starts_at))));
     if (wk.length) sections.push(rail("This weekend", wk.map((e) => card(e)).join("")));
     const fr = take(upcoming.filter((e) => e.friends && (e.friends.going > 0 || e.friends.interested > 0)));

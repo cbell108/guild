@@ -47,7 +47,7 @@ pub async fn ask(
     }
     let vocabulary: Vec<String> = state
         .store
-        .list_tags()
+        .list_tags_from(state.now())
         .await?
         .into_iter()
         .take(VOCAB_TAGS)

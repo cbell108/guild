@@ -30,7 +30,13 @@ Add `?mock=1` to the URL to browse the static mock data with no backend. The Dis
 (`cargo run -p bot`) needs a `DISCORD_TOKEN` in `.env`. Natural-language hosting needs a local
 OpenAI-compatible server at `LLM_BASE_URL`; without one the form still works by hand.
 
-![For you feed](docs/screenshots/feed.jpg)
+<p>
+  <img src="docs/screenshots/feed-for-you-mobile.jpg" alt="For you feed with reasons on each card" width="240">
+  <img src="docs/screenshots/event-going-with-buddy-mobile.jpg" alt="Event page with friends going and buddy matching" width="240">
+  <img src="docs/screenshots/checkin-qr-mobile.jpg" alt="Host check-in page with a rotating QR code" width="240">
+</p>
+
+More in [`docs/screenshots/`](docs/screenshots/).
 
 ## Demo
 

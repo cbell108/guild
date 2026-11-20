@@ -1,0 +1,20 @@
+# Editor configuration for campus-hangouts.
+# Rust is 4 spaces (matches rustfmt); JS/CSS/HTML/JSON/YAML/markdown are 2.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+
+[*.{rs,toml,sql}]
+indent_size = 4
+
+[*.rs]
+max_line_length = 100
+
+[*.{js,mjs,css,html,json,yml,yaml,md}]
+indent_size = 2

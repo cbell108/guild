@@ -264,7 +264,7 @@ async fn events_crud_filter_and_tags() {
         1
     );
 
-    let tags = s.list_tags().await.unwrap();
+    let tags = s.list_tags_from(t0()).await.unwrap();
     assert_eq!(
         tags.iter()
             .map(|(t, _)| t.as_str())
