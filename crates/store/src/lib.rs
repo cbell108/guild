@@ -4,7 +4,7 @@
 //! against these signatures.
 //!
 //! Implementation notes:
-//! - Only the runtime [`sqlx::query`] API is used. The compile-time `query!`
+//! - Only the runtime [`sqlx::query()`] API is used. The compile-time `query!`
 //!   macros are deliberately avoided so that building this crate never requires
 //!   a `DATABASE_URL`.
 //! - Every write takes an explicit `at: DateTime<Utc>` so the `seed` crate can
