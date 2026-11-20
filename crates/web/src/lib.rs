@@ -16,7 +16,7 @@ pub mod view;
 
 pub use state::{AppState, Clock};
 
-use routes::{auth as auth_routes, buddy, calendar, crews, events, feed, friends, intents};
+use routes::{auth as auth_routes, buddy, calendar, crews, events, feed, friends, intents, parse};
 
 /// The full router.
 pub fn app(state: AppState) -> Router {
@@ -39,6 +39,7 @@ pub fn app(state: AppState) -> Router {
             get(buddy::get).post(buddy::toggle),
         )
         .route("/api/feed", get(feed::feed))
+        .route("/api/parse", post(parse::parse))
         .route("/api/friends", get(friends::list).post(friends::request))
         .route("/api/friends/{user_id}/accept", post(friends::accept))
         .route("/api/friends/{user_id}", delete(friends::remove))

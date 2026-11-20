@@ -22,7 +22,7 @@ Your branch has Lane C's crates as placeholders: `recommend::feed` returns upcom
 - [x] A7 MUST Buddy match: `POST /api/events/:id/buddy` (toggle looking), `GET /api/events/:id/buddy` → friend first, else `recommend::similar_users` among others looking.
 - [x] A8 MUST Serve `static/` at `/`; `GET /api/events/{id}/calendar.ics`.
 - [x] A9 Friends + crews endpoints.
-- [ ] A10 `POST /api/parse` → `llm::parse_hangout`; 503 with a friendly message if the LLM is down.
+- [x] A10 `POST /api/parse` → `llm::parse_hangout`; 503 with a friendly message if the LLM is down.
 - [ ] A11 STRETCH Check-in: rotating HMAC QR token (60 s window) `GET /api/events/:id/qr`, `POST /api/checkin`.
 - [ ] A12 STRETCH Privacy settings endpoints (visibility toggles, delete history).
 
